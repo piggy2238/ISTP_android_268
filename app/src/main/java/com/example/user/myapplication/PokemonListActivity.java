@@ -57,18 +57,17 @@ public class PokemonListActivity extends AppCompatActivity {
     //設定點選不同icon的邏輯
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int intemId = item.getItemId();
-        if (intemId == R.id.action_delete){
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_delete){
             Log.d("menuItem", "action_delete");
             return true;
-        }else if(intemId == R.id.action_heal){
+        }else if(itemId == R.id.action_heal){
             Log.d("menuItem", "action_heal");
             return true;
-        }else{
+        }else if(itemId == R.id.action_setting){
             Log.d("menuItem", "action_setting");
             return true;
         }
-
-        return false;
+           return false;
     }
 }
