@@ -8,6 +8,8 @@ import android.widget.ListView;
 
 import com.example.user.myapplication.model.OwningPokemonDataManager;
 
+import java.util.ArrayList;
+
 /**
  * Created by User on 2016/7/28.
  */
@@ -27,7 +29,7 @@ public class PokemonListActivity extends AppCompatActivity {
                 OwningPokemonDataManager mdataManager = new OwningPokemonDataManager(this);
 
                 //--- 利用這個 class中的method 實際把pokemon 的名字抓出來
-                Array<String> mPokemonNames = mdataManager.getPokemonNames();
+                ArrayList<String> mPokemonNames = mdataManager.getPokemonNames();
 
         //------設定Adapter-------//
         ArrayAdapter<String> madapter = new ArrayAdapter<String>(
