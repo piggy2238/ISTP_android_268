@@ -1,10 +1,13 @@
 package com.example.user.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -17,7 +20,7 @@ import java.util.ArrayList;
 /**
  * Created by user on 2016/7/25.
  */
-public class PokemonListActivity extends AppCompatActivity {
+public class PokemonListActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
     //宣告變數
     PokemonListViewAdapter adapter;
 
@@ -46,7 +49,7 @@ public class PokemonListActivity extends AppCompatActivity {
 
         //將Adapter設定到listview上
         listview.setAdapter(adapter);
-
+        listview.setOnItemClickListener(this);
 
 
     }
@@ -78,7 +81,14 @@ public class PokemonListActivity extends AppCompatActivity {
            return false;
     }
 
+        public final static int detailActivityRequestCode = 1;
 
-
-
+       //把pokemoninfo拿出來後產生intent
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        PokemonInfo pokemonInfo = adapter.getItem(position);
+        Intent intent = new Intent(PokemonListActivity.this, PokemonDetailActivity.class);
+        intent.putExtra(PokemonInfo.parcelKey, pokemonInfo);
+        startActivityForResult(intent, detailActivityRequestCode);
+    }
 }
