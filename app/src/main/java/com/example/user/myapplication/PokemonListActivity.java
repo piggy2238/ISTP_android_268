@@ -77,4 +77,8 @@ public class PokemonListActivity extends AppCompatActivity {
         }
            return false;
     }
+
+
+
+
 }
