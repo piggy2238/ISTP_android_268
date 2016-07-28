@@ -1,4 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <!--新增項目-->
+    <item
+        <!--android:id="@+id/action_delete"-->
+        <!--android:title=顯示的文字值-->
+        <!--android:icon="顯示的圖片"-->
+        <!--android:showAsAction=要放在旁邊還是收起來 ifRoom:有空間的話就顯示/沒有就收起來 />-->
+        <!--never:強制收起-->
+
+    <item
+        android:id="@+id/action_delete"
+        android:title="丟棄"
+        android:icon="@android:drawable/ic_delete"
+        android:showAsAction="ifRoom"  />
+    <item
+        android:id="@+id/action_heal"
+        android:title="治療"
+        android:icon="@drawable/pokemon_center"
+        android:showAsAction="ifRoom"
+        />
+    <item
+        android:id="@+id/action_setting"
+        android:title="設定"
+        android:showAsAction="never"
+        />
 
 </menu>

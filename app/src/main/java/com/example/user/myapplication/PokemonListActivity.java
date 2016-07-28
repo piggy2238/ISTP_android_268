@@ -2,6 +2,9 @@ package com.example.user.myapplication;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -43,5 +46,29 @@ public class PokemonListActivity extends AppCompatActivity {
 
 
 
+    }
+
+    //加入action bar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.list_action_bar_menu,menu);
+        return true; //表示一定會顯示action bar的畫面
+    }
+    //設定點選不同icon的邏輯
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int intemId = item.getItemId();
+        if (intemId == R.id.action_delete){
+            Log.d("menuItem", "action_delete");
+            return true;
+        }else if(intemId == R.id.action_heal){
+            Log.d("menuItem", "action_heal");
+            return true;
+        }else{
+            Log.d("menuItem", "action_setting");
+            return true;
+        }
+
+        return false;
     }
 }

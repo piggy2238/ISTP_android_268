@@ -8,13 +8,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
+import com.example.user.myapplication.R;
 import com.example.user.myapplication.model.PokemonInfo;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import com.example.user.myapplication.R;
+
 
 /**
  * Created by user on 2016/7/25.
