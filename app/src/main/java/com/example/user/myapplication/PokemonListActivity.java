@@ -18,6 +18,9 @@ import java.util.ArrayList;
  * Created by user on 2016/7/25.
  */
 public class PokemonListActivity extends AppCompatActivity {
+    //宣告變數
+    PokemonListViewAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +39,7 @@ public class PokemonListActivity extends AppCompatActivity {
         ArrayList<PokemonInfo> pokemonInfos = dataManager.getPokemonInfos();
 
         //設定Adapter
-        PokemonListViewAdapter adapter = new PokemonListViewAdapter(
+        adapter = new PokemonListViewAdapter(
                 this, R.layout.row_view_pokemon_list, pokemonInfos
         );
 
@@ -60,6 +63,10 @@ public class PokemonListActivity extends AppCompatActivity {
         int itemId = item.getItemId();
         if (itemId == R.id.action_delete){
             Log.d("menuItem", "action_delete");
+            for(PokemonInfo pokemonInfo: adapter.selectedPokemon){
+                adapter.remove(pokemonInfo);
+            }
+            //把選取的pokemon info移除
             return true;
         }else if(itemId == R.id.action_heal){
             Log.d("menuItem", "action_heal");

@@ -29,7 +29,7 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
     //放圖
     Picasso mPicasso;
     //要記憶被選擇的列
-    ArrayList<PokemonInfo> selectedPokemon;
+    public  ArrayList<PokemonInfo> selectedPokemon;
 
     //----------------------初始化 start
     //選擇繼承類別
@@ -49,7 +49,12 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
 
     //紀錄被選取的神奇寶貝,被反選取的要被移除,同時也要能夠當程參數被傳到ViewHolder
     public void onPokemonSelectedChang(PokemonInfo pokemonInfo){
-
+        //如果已被選取, 掛上被選取
+        if(pokemonInfo.isSelected){
+            selectedPokemon.add(pokemonInfo);
+        }else{
+            selectedPokemon.remove(pokemonInfo);
+        }
 
     }
 
@@ -152,6 +157,8 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
             int viewId = v.getId();
             if(viewId == R.id.img){
                 setSelected();
+                //記錄這個神奇寶貝的Info變化 |--當前綁定的pokemonInfo--|
+                mAdapter.onPokemonSelectedChang(mpokemonInfo);
 
             }
         }
