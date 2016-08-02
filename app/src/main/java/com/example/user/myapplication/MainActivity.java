@@ -19,7 +19,7 @@ import com.example.user.myapplication.model.PokemonInfo;
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener,RadioGroup.OnCheckedChangeListener,TextView.OnEditorActionListener {
+public class MainActivity extends CustomizedActivity implements View.OnClickListener,RadioGroup.OnCheckedChangeListener,TextView.OnEditorActionListener {
 
 //  設定使用變數:類別 名稱與內容
     TextView infoText;
@@ -77,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //從Main Activity跳到PokemonListActivity去
                         Intent intent = new Intent(MainActivity.this,PokemonListActivity.class);
                         startActivity(intent);
+                    //砍掉MainActivity 讓ListActivity 成為新的Root Activity
+                    //跳轉後結束MainActivity
+                    MainActivity.this.finish();
                 }
             } , changeActivityInSecs * 1000);
         }

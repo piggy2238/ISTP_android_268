@@ -13,7 +13,7 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by user on 2016/7/28.
  */
-public class PokemonDetailActivity extends AppCompatActivity {
+public class PokemonDetailActivity extends CustomizedActivity {
 
     PokemonInfo mpokemonInfo;
     Resources mRes;
