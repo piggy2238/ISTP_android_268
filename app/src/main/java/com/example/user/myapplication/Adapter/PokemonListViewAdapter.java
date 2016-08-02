@@ -125,8 +125,8 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
         //SetView 得到一個參數=pokemon的info 把資料取出放到UI
         public void setView(PokemonInfo pokemonInfo){
             //Setting row view
-            mRowView.setActivated(pokemonInfo.isSelected);
             mpokemonInfo = pokemonInfo;
+            mRowView.setActivated(pokemonInfo.isSelected);
             //textView 透過 setview設計內容
             //成員變數.setText(pokemon.(Info內的變數名稱)) 須注意資料型態上的轉換
             hp.setText(String.valueOf(pokemonInfo.currentHP));
@@ -147,6 +147,8 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
         public void setSelected(){
             mpokemonInfo.isSelected = !mpokemonInfo.isSelected;
             mRowView.setActivated(mpokemonInfo.isSelected);
+            //記錄這個神奇寶貝的Info變化 |--當前綁定的pokemonInfo--|
+            mAdapter.onPokemonSelectedChang(mpokemonInfo);
         }
 
 
@@ -156,9 +158,6 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
             int viewId = v.getId();
             if(viewId == R.id.img){
                 setSelected();
-                //記錄這個神奇寶貝的Info變化 |--當前綁定的pokemonInfo--|
-                mAdapter.onPokemonSelectedChang(mpokemonInfo);
-
             }
         }
     }
