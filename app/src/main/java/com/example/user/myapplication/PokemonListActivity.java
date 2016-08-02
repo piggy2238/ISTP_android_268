@@ -53,13 +53,17 @@ public class PokemonListActivity extends AppCompatActivity implements AdapterVie
 
 
     }
-
+///////////////////////////////////////////////////////////////////////
+    //Setting Action bar
+    ////1.在Activity加入action bar (導入xml)
+    ////2.設定Action bar 選取後的功能
     //加入action bar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.list_action_bar_menu,menu);
         return true; //表示一定會顯示action bar的畫面
     }
+    //2.設定Action bar 選取後的功能
     //設定點選不同icon的邏輯
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -80,6 +84,7 @@ public class PokemonListActivity extends AppCompatActivity implements AdapterVie
         }
            return false;
     }
+
 
         public final static int detailActivityRequestCode = 1;
 

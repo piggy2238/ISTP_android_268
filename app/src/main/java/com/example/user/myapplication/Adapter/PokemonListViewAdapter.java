@@ -30,7 +30,6 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
     Picasso mPicasso;
     //要記憶被選擇的列
     public  ArrayList<PokemonInfo> selectedPokemon;
-
     //----------------------初始化 start
     //選擇繼承類別
     //                                             |---LayoutId---|
