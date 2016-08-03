@@ -34,12 +34,14 @@ public class OwningPokemonDataManager {
         BufferedReader reader;
         String line = null;
         try {
+            //引用神奇寶貝類型資料
             //引用原始資料
-            reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open("pokemon_data.csv")));
+            reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open("pokemon_types.csv")));
             //用,把各項目資料分開
             PokemonInfo.typeNames = reader.readLine().split(",");
             reader.close();
 
+            //引用神奇寶貝詳細資料
             reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open("pokemon_data.csv")));
             int skill_startIndex = 7;
             while ((line = reader.readLine()) != null) {

@@ -159,5 +159,27 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
         }
     }
 
+    /////////////////////////////////////////////////////////
+    //目前未知功能的function
+//    public PokemonInfo getItemWithName(String name) {
+//
+//        for(int i = 0;i < getCount();i++) {
+//            PokemonInfo pokemonInfo = getItem(i);
+//            if(name.equals(pokemonInfo.name)) {
+//                return pokemonInfo;
+//            }
+//        }
+//
+//        return null;
+//    }
+//
+//    public void update(PokemonInfo newData) {
+//        PokemonInfo oldData = getItemWithName(newData.name);
+//        oldData.skill = newData.skill;
+//        oldData.currentHP = newData.currentHP;
+//        oldData.maxHP = newData.maxHP;
+//        oldData.level = newData.level;
+//        notifyDataSetChanged();
+//    }
 
 }

@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int viewId = v.getId();
         if(viewId == R.id.confirm_button) {
 
-            int changeActivityInSecs = 5; //延遲進入的秒數
+            int changeActivityInSecs = 0; //延遲進入的秒數
             //1. 顯示歡迎介面
             infoText.setText(String.format("你好, 訓練家%s 歡迎來到神奇寶貝的世界,你的夥伴是%s,冒險即將於%d秒鐘之後開始",
                     name_editText.getText().toString(),
