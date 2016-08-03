@@ -1,5 +1,6 @@
 package com.example.user.myapplication;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.user.myapplication.model.PokemonInfo;
 import com.squareup.picasso.Picasso;
@@ -21,7 +23,7 @@ public class PokemonDetailActivity extends CustomizedActivity {
     PokemonInfo mpokemonInfo;
     Resources mRes;
     String packageName;
-
+    String level;
 
     //UI 成員變數
     ImageView img;
@@ -107,10 +109,6 @@ public class PokemonDetailActivity extends CustomizedActivity {
             }
         }
 
-
-
-
-
         int progress = (int)((((float)(mpokemonInfo.currentHP))/mpokemonInfo.maxHP)*100);
         hbBar.setProgress(progress);
     }
@@ -120,21 +118,62 @@ public class PokemonDetailActivity extends CustomizedActivity {
     //1.加到頁面中
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        //透過menu Inflater 來生成對應的menu的id　|--- 新增的xml名字 ---|
         getMenuInflater().inflate(R.menu.pokemon_detail_action_bar_menu,menu);
-        return true;
+        return true; // 一定會顯示menu
     }
 
     //2.增加功能
+    //新增listener的概念 描述當menu被點到的時候要做什麼
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //先透過getItenId拿到itemID
         int itemID = item.getItemId();
-        if (itemID == R.id.action_save){
-            Log.d("menuItem","action_save");
 
+        //判斷是否被選到
+        //判斷是否與menu內存在id相同 (相同表示存在<return true>,不相同表示不存在<return false>)
+        if (itemID == R.id.action_save){
+            //test是否按鈕可work
+            //Log.d("menuItem","action_save");
+
+            //0.準備一個包裹將記錄回傳
+            Intent intent = new Intent();
+
+            //1.紀錄被選到的pokemon key與name
+            intent.putExtra(PokemonInfo.nameKey,mpokemonInfo.name);
+            setResult(PokemonListActivity.listRemove,intent);
+
+            //2.刪除此pokemon資料 (Work on ListActivity)
+
+            //3.結束本頁瀏覽
+            finish(); //進入onDistroy 階段
 
             return true;
+
         }else if(itemID == R.id.action_level_up){
+            //測試按鈕是否可work
             Log.d("menuItem","action_level_up");
+            //1.取回pokemon level 資料
+            int level=Integer.valueOf(mpokemonInfo.level);
+
+            //2.pokemon level up
+             level+=1;
+
+            //3.存回原始紀錄
+            levelText.setText(String.valueOf(level));
+            Toast.makeText(this,"恭喜升級",Toast.LENGTH_SHORT).show();
+
+            //4.準備一個包裹將記錄回傳
+            Intent intent = new Intent();
+
+            //5.紀錄被選到的pokemon key與name
+            intent.putExtra(PokemonInfo.nameKey,mpokemonInfo.name);
+            setResult(PokemonListActivity.listLevelup,intent);
+
+            //6.升級此pokemon資料 (Work on ListActivity)
+
+            //7.結束本頁瀏覽
+            finish(); //進入onDistroy 階段
 
             return true;
 

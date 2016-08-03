@@ -59,7 +59,6 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
     }
 
     //getView = 拿到整個row的view,決定整個view長的樣子
-
 //  |--預計要顯示資料中的第幾個--|
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -160,26 +159,26 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
     }
 
     /////////////////////////////////////////////////////////
-    //目前未知功能的function
-//    public PokemonInfo getItemWithName(String name) {
-//
-//        for(int i = 0;i < getCount();i++) {
-//            PokemonInfo pokemonInfo = getItem(i);
-//            if(name.equals(pokemonInfo.name)) {
-//                return pokemonInfo;
-//            }
-//        }
-//
-//        return null;
-//    }
-//
-//    public void update(PokemonInfo newData) {
-//        PokemonInfo oldData = getItemWithName(newData.name);
-//        oldData.skill = newData.skill;
-//        oldData.currentHP = newData.currentHP;
-//        oldData.maxHP = newData.maxHP;
-//        oldData.level = newData.level;
-//        notifyDataSetChanged();
-//    }
+    //透過name 找尋他的Item detail
+    public PokemonInfo getItemWithName(String name) {
+
+        for(int i = 0;i < getCount();i++) {
+            PokemonInfo pokemonInfo = getItem(i);
+            if(name.equals(pokemonInfo.name)) {
+                return pokemonInfo;
+            }
+        }
+
+        return null;
+    }
+
+    public void update(PokemonInfo newData) {
+        PokemonInfo oldData = getItemWithName(newData.name);
+        oldData.skill = newData.skill;
+        oldData.currentHP = newData.currentHP;
+        oldData.maxHP = newData.maxHP;
+        oldData.level = newData.level;
+        notifyDataSetChanged();
+    }
 
 }

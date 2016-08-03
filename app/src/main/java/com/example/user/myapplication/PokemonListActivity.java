@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.user.myapplication.adapter.PokemonListViewAdapter;
 import com.example.user.myapplication.model.OwningPokemonDataManager;
@@ -88,8 +89,10 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
 
 
         public final static int detailActivityRequestCode = 1;
+        public final static int listRemove = 1;
+        public final static int listLevelup = 2;
 
-       //把pokemoninfo拿出來後產生intent
+    //把pokemoninfo拿出來後產生intent
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         PokemonInfo pokemonInfo = adapter.getItem(position);
@@ -97,4 +100,44 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
         intent.putExtra(PokemonInfo.parcelKey, pokemonInfo);
         startActivityForResult(intent, detailActivityRequestCode);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == listRemove){
+            //1.接收要刪除的pokemon name 與 key
+            String nameToRemove = data.getStringExtra(PokemonInfo.nameKey);
+
+            //2.從name 去得到此pokemon的完整資訊
+            //利用Adapter 已寫好的 getItemWitnName function完成本工作
+            PokemonInfo pokemonInfo = adapter.getItemWithName(nameToRemove);
+
+            //3.執行刪除動作並通知使用者
+            if (pokemonInfo!=null){
+                adapter.remove(pokemonInfo);
+                Toast.makeText(this,pokemonInfo.name+"已存入電腦中",Toast.LENGTH_LONG).show();
+            }
+
+        }else if(resultCode == listLevelup){
+            //1.接收要刪除的pokemon name 與 key
+            String nameToRemove = data.getStringExtra(PokemonInfo.nameKey);
+
+            //2.從name 去得到此pokemon的完整資訊
+            //利用Adapter 已寫好的 getItemWitnName function完成本工作
+            PokemonInfo pokemonInfo = adapter.getItemWithName(nameToRemove);
+
+            //3.執行LevelUp並通知使用者
+            if (pokemonInfo!=null){
+                //被選到的pokemon level +1
+                int level=Integer.valueOf(pokemonInfo.level);
+                level+=1;
+                pokemonInfo.level = level;
+                //更新pokemon資訊
+                adapter.update(pokemonInfo);
+                Toast.makeText(this,pokemonInfo.name+"已升級",Toast.LENGTH_LONG).show();
+            }
+
+        }
+    }
+
 }
