@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -17,6 +18,8 @@ import com.example.user.myapplication.model.OwningPokemonDataManager;
 import com.example.user.myapplication.model.PokemonInfo;
 
 import java.util.ArrayList;
+
+import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
 
 public class MainActivity extends CustomizedActivity implements View.OnClickListener,RadioGroup.OnCheckedChangeListener,TextView.OnEditorActionListener {
@@ -29,6 +32,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
     String[] pokemonNames = new String[]{
         "小火龍","傑尼龜","妙蛙種子"
     };
+    ProgressBar progressBar;
 //  程式初始化
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +51,14 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
         name_editText = (EditText) findViewById(R.id.name_editText);
         name_editText.setOnEditorActionListener(this);
 
+        //Setting ProgressBar
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        progressBar.setIndeterminateDrawable(new CircularProgressDrawable
+                .Builder(this)
+                .colors(getResources().getIntArray(R.array.gplus_color))
+                .sweepSpeed(1f)
+                .strokeWidth(8f)
+                .build());
     }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

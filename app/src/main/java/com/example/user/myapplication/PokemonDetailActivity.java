@@ -152,7 +152,7 @@ public class PokemonDetailActivity extends CustomizedActivity {
 
         }else if(itemID == R.id.action_level_up){
             //測試按鈕是否可work
-            Log.d("menuItem","action_level_up");
+            //Log.d("menuItem","action_level_up");
             //1.取回pokemon level 資料
             int level=Integer.valueOf(mpokemonInfo.level);
 
