@@ -84,7 +84,7 @@
         android:max="100"
         android:minWidth="170dp"
         android:minHeight="15dp"
-        android:progressTint="#00537a"
+        android:progressTint="#96c6dd"
         android:layout_alignTop="@+id/name"
         android:layout_toRightOf="@+id/name"
         android:layout_toEndOf="@+id/name"

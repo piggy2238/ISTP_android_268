@@ -15,20 +15,20 @@ public class PokemonInfo implements Parcelable {
 
     //因為要傳遞值 使用plugin 進行批次傳遞 存於parcle 作為初始化數值 再傳遞到下個Activity
     //但因為detail 還沒做, 所以這邊先不進行
-
+    public int detailImgId;
     public int imgId;
     public String name;
     public int level;
     public int currentHP;
     public int maxHP;
+    public int type_1;
+    public int type_2;
+    public String[] skill = new String[numCurrentSkills];
 
     public boolean isSelected = false;
     //public boolean isHealing = false;
 
-    public int detailImgId;
-    public int type_1;
-    public int type_2;
-    public String[] skill = new String[numCurrentSkills];
+
 
 
     @Override

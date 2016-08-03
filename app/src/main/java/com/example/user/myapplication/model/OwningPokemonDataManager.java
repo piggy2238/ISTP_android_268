@@ -31,20 +31,35 @@ public class OwningPokemonDataManager {
 
     private void loadTestingData() {
         pokemonInfos = new ArrayList<>();
+        BufferedReader reader;
+        String line = null;
         try {
-            InputStreamReader is = new InputStreamReader(mContext.getAssets().open("pokemon_data.csv"));
-            BufferedReader reader = new BufferedReader(is);
-            String line = null;
+            //引用原始資料
+            reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open("pokemon_data.csv")));
+            //用,把各項目資料分開
+            PokemonInfo.typeNames = reader.readLine().split(",");
+            reader.close();
+
+            reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open("pokemon_data.csv")));
+            int skill_startIndex = 7;
             while ((line = reader.readLine()) != null) {
                 String[] dataFields = line.split(",");
                 PokemonInfo pokemonInfo = new PokemonInfo();
-                pokemonInfo.imgId = mRes.getIdentifier(dataFields[0],"drawable",packageName);
+                pokemonInfo.detailImgId = mRes.getIdentifier("detail_" + dataFields[0],"drawable",packageName);
+                pokemonInfo.imgId = mRes.getIdentifier("list_" + dataFields[0],"drawable",packageName);
                 pokemonInfo.name = dataFields[1];
                 pokemonInfo.level = Integer.valueOf(dataFields[2]);
                 pokemonInfo.currentHP = Integer.valueOf(dataFields[3]);
                 pokemonInfo.maxHP = Integer.valueOf(dataFields[4]);
+                pokemonInfo.type_1 = Integer.valueOf(dataFields[5]);
+                pokemonInfo.type_2 = Integer.valueOf(dataFields[6]);
+                //if strings are not enough, rest of array index would point to null.
+                for(int i = skill_startIndex;i < dataFields.length;i++) {
+                    pokemonInfo.skill[i - skill_startIndex] = dataFields[i];
+                }
                 pokemonInfos.add(pokemonInfo);
             }
+            reader.close();
         }
         catch(Exception e) {
             Log.d("testCsv", e.getLocalizedMessage());
