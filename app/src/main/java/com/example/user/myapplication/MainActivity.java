@@ -1,6 +1,8 @@
 package com.example.user.myapplication;
 
+import android.app.Application;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,7 +34,19 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
     String[] pokemonNames = new String[]{
         "小火龍","傑尼龜","妙蛙種子"
     };
+    Button confirm_button;
+    int changeActivityInSecs = 0; //延遲進入的秒數
     ProgressBar progressBar;
+
+    //利用SharePreference 進行偏好設定, 以下為所需變數
+    SharedPreferences preferences;
+    String nameOfTheTrainer;
+    public final static String optionSelectedKey = "selection";
+    public final static String nameEditTextKey = "nameOfTheTrainer";
+
+    //Setting UI 狀態
+    public enum UISetting{Initial, DataIsKnown}
+    UISetting uiSetting;
 //  程式初始化
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +55,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
 
         //透過id設定各Activity中的物件與xml的物件結合
         //如有需要根據各項目需求要設定其listener
-        Button confirm_button = (Button)findViewById(R.id.confirm_button);
+        confirm_button = (Button)findViewById(R.id.confirm_button);
         confirm_button.setOnClickListener(this);
 
         optionGrp = (RadioGroup) findViewById(R.id.optionsGroup);
@@ -59,8 +73,65 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
                 .sweepSpeed(1f)
                 .strokeWidth(8f)
                 .build());
+
+        //判定是否為第一次的使用者
+        //1.抓入偏好設定資料
+        //2.抓偏好設定資料中_訓練家姓名
+        //3.抓偏好設定資料中_第一隻神奇寶貝名字
+        //4.判定是否為第一次使用者 (根據訓練家姓名是否為null為依據)
+        //5.UI 狀態設定好以後再呼叫新的function 決定螢幕顯示狀況
+        preferences = getSharedPreferences(Application.class.getName(),MODE_PRIVATE);
+        selectedOptionIndex = preferences.getInt(optionSelectedKey,selectedOptionIndex);
+        nameOfTheTrainer = preferences.getString(nameEditTextKey,nameOfTheTrainer);
+        if(nameOfTheTrainer == null){
+            uiSetting = UISetting.Initial;
+        }else{
+            uiSetting = UISetting.DataIsKnown;
+        }
+        changeUIAccordingToRecord();
+
     }
 
+ //////////////////////////////////////////////////////////////////////////////////////////////
+// 根據不同的登入情況 選擇UI要顯示及隱藏的項目
+    private void changeUIAccordingToRecord(){
+        if(uiSetting == UISetting.DataIsKnown){
+         //隱藏組
+           name_editText.setVisibility(View.INVISIBLE);
+           optionGrp.setVisibility(View.INVISIBLE);
+           confirm_button.setVisibility(View.INVISIBLE);
+         //顯示組
+            progressBar.setVisibility(View.VISIBLE);
+            //although button is invisible, we can still simulate the button clicked.
+            confirm_button.performClick();
+        }else{
+         //隱藏的顯示,顯示的隱藏
+            name_editText.setVisibility(View.VISIBLE);
+            optionGrp.setVisibility(View.VISIBLE);
+            confirm_button.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
+        }
+    }
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// 根據不同的登入狀況 選擇要顯示的文字
+    private void setInfoTextWithFormat(){
+        //針對原使用者
+        if(uiSetting == UISetting.DataIsKnown){
+            infoText.setText(String.format("你好, 訓練家%s 歡迎回到神奇寶貝的世界,你的夥伴是%s,冒險即將於%d秒鐘之後繼續",
+                    name_editText.getText().toString(),
+                    pokemonNames[selectedOptionIndex],
+                    changeActivityInSecs));
+
+        }else{
+            infoText.setText(String.format("你好, 訓練家%s 歡迎來到神奇寶貝的世界,你的夥伴是%s,冒險即將於%d秒鐘之後開始",
+                    name_editText.getText().toString(),
+                    pokemonNames[selectedOptionIndex],
+                    changeActivityInSecs
+            ));
+
+        }
+    }
 ///////////////////////////////////////////////////////////////////////////////////////////////
     //按下確認後
     //1. 顯示歡迎介面
@@ -70,27 +141,32 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
     public void onClick(View v) {
         int viewId = v.getId();
         if(viewId == R.id.confirm_button) {
+            //-1.點了button 以後不要再讓人家按
+            v.setClickable(false);
+            //0.判斷若為初次使用的使用者, 須將其資料儲存
+            if(uiSetting == UISetting.Initial){
+                nameOfTheTrainer = name_editText.getText().toString();
+                SharedPreferences.Editor editor = preferences.edit();
+                //紀錄訓練家姓名
+                editor.putString(nameEditTextKey,nameOfTheTrainer);
+                //紀錄選擇的神奇寶貝
+                editor.putInt(optionSelectedKey,selectedOptionIndex);
+                //紀錄為版本,成功存入
+                editor.commit();
+            }
 
-            int changeActivityInSecs = 0; //延遲進入的秒數
+
             //1. 顯示歡迎介面
-            infoText.setText(String.format("你好, 訓練家%s 歡迎來到神奇寶貝的世界,你的夥伴是%s,冒險即將於%d秒鐘之後開始",
-                    name_editText.getText().toString(),
-                    pokemonNames[selectedOptionIndex],
-                    changeActivityInSecs
-                    ));
+            setInfoTextWithFormat();
+
             //2. 跳轉至下一頁面 //切換到另一個Activity
             //新增一個跳轉的物件
-                Handler handler = new Handler(MainActivity.this.getMainLooper());
-//              handler.postDelayed("Runnable","delay time")
-//              handler.postDelayed("要做的事情","延遲 n 毫秒")
+            Handler handler = new Handler(MainActivity.this.getMainLooper());
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    //從Main Activity跳到PokemonListActivity去
-                        Intent intent = new Intent(MainActivity.this,PokemonListActivity.class);
-                        startActivity(intent);
-                    //砍掉MainActivity 讓ListActivity 成為新的Root Activity
-                    //跳轉後結束MainActivity
+                    Intent intent = new Intent(MainActivity.this,PokemonListActivity.class);
+                    startActivity(intent);
                     MainActivity.this.finish();
                 }
             } , changeActivityInSecs * 1000);
@@ -103,7 +179,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
     //1.感受到checked/change
     //2.儲存選擇的項目
     //3.回傳選擇的項目,並設定預設值
-    public final static String optionSelectedKey = "selection";
+
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
