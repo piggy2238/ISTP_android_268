@@ -3,7 +3,9 @@ package com.example.user.myapplication;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -123,6 +125,24 @@ public class PokemonDetailActivity extends CustomizedActivity {
     }
 
     //2.增加功能
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemID = item.getItemId();
+        if (itemID == R.id.action_save){
+            Log.d("menuItem","action_save");
+
+
+            return true;
+        }else if(itemID == R.id.action_level_up){
+            Log.d("menuItem","action_level_up");
+
+            return true;
+
+        }
+
+        return false;
+
+    }
 }
 
 
