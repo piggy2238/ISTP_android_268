@@ -3,6 +3,7 @@ package com.example.user.myapplication;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -112,10 +113,16 @@ public class PokemonDetailActivity extends CustomizedActivity {
         hbBar.setProgress(progress);
     }
 
+//////////////////////////////////////////////////////////////////
+    //Add Action Bar
+    //1.加到頁面中
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.pokemon_detail_action_bar_menu,menu);
+        return true;
+    }
 
-
-
-
+    //2.增加功能
 }
 
 
