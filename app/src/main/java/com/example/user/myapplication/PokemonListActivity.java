@@ -43,8 +43,9 @@ public class PokemonListActivity extends AppCompatActivity implements AdapterVie
 
         //設定Adapter
         adapter = new PokemonListViewAdapter(
-                this, R.layout.row_view_pokemon_list, pokemonInfos
-        );
+                this, //context
+                R.layout.row_view_pokemon_list, //row view layout id(file_name)
+                pokemonInfos); //data
 
 
         //將Adapter設定到listview上

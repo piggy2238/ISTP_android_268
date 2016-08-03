@@ -23,7 +23,7 @@ public class PokemonInfo implements Parcelable {
     public int maxHP;
 
     public boolean isSelected = false;
-    public boolean isHealing = false;
+    //public boolean isHealing = false;
 
     public int detailImgId;
     public int type_1;

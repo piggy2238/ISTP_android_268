@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.example.user.myapplication.R;
 import com.example.user.myapplication.model.PokemonInfo;
 import com.squareup.picasso.Picasso;
@@ -56,10 +57,6 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
         }
 
     }
-
-
-
-
 
     //getView = 拿到整個row的view,決定整個view長的樣子
 
@@ -161,5 +158,6 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
             }
         }
     }
+
 
 }

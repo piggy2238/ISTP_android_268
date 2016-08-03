@@ -70,6 +70,7 @@ public class PokemonDetailActivity extends AppCompatActivity {
             skillText[i] = (TextView)findViewById(skillTextId);
         }
 
+        //bind with data
         mPicasso.load(mpokemonInfo.detailImgId).into(img);
         nameText.setText(mpokemonInfo.name);
         levelText.setText(String.valueOf(mpokemonInfo.level));
