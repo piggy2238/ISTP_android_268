@@ -34,6 +34,7 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
     AlertDialog alertDialog;
     SoundPool soundPool;
     int healing_sound;
+    int pokemon_delete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,8 +83,9 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
 
     ///////////////////////////////////////////////////////////
 
-        soundPool= new SoundPool(1, AudioManager.STREAM_MUSIC,5);
+        soundPool= new SoundPool(5, AudioManager.STREAM_MUSIC,5);
         healing_sound = soundPool.load(this,R.raw.healing_sound,1);
+        pokemon_delete = soundPool.load(this,R.raw.pokemon_out,1);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -141,6 +143,7 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
         if (which == AlertDialog.BUTTON_NEGATIVE) {
             Toast.makeText(this, "取消丟棄", Toast.LENGTH_SHORT).show();
         } else if (which == AlertDialog.BUTTON_POSITIVE) {
+            soundPool.play(pokemon_delete,1,1,0,0,0);
             //把選取的pokemon info移除
             for (PokemonInfo pokemonInfo : adapter.selectedPokemon) {
                 adapter.remove(pokemonInfo);

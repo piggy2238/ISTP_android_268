@@ -42,6 +42,7 @@ public class PokemonDetailActivity extends CustomizedActivity {
     //音效
     SoundPool soundPool;
     int level_up_sound;
+    int pokemon_save;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -63,8 +64,9 @@ public class PokemonDetailActivity extends CustomizedActivity {
             setView();
 
         //導入音效
-        soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC,5);
+        soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC,5);
         level_up_sound = soundPool.load(this,R.raw.level_up_sound,1);
+        pokemon_save = soundPool.load(this,R.raw.pokemon_save,1);
     }
 
 
@@ -142,6 +144,7 @@ public class PokemonDetailActivity extends CustomizedActivity {
         //判斷是否被選到
         //判斷是否與menu內存在id相同 (相同表示存在<return true>,不相同表示不存在<return false>)
         if (itemID == R.id.action_save){
+            soundPool.play(pokemon_save,1,1,0,0,0);
             //test是否按鈕可work
             //Log.d("menuItem","action_save");
 
