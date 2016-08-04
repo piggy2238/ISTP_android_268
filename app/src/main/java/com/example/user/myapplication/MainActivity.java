@@ -158,7 +158,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
                 editor.putInt(optionSelectedKey,selectedOptionIndex);
                 //紀錄為版本,成功存入
                 editor.commit();
-                Toast.makeText(this,"使用者資料已存入",Toast.LENGTH_LONG).show();
+                //Toast.makeText(this,"使用者資料已存入",Toast.LENGTH_LONG).show();
                 //點確認後,把介面用好看一點
                 //隱藏組
                 name_editText.setVisibility(View.INVISIBLE);

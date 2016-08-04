@@ -100,6 +100,7 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
             return true;
         } else if (itemId == R.id.action_heal) {
             Log.d("menuItem", "action_heal");
+
             return true;
         } else if (itemId == R.id.action_setting) {
             Log.d("menuItem", "action_setting");
@@ -108,6 +109,21 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
         return false;
     }
 
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        if (which == AlertDialog.BUTTON_NEGATIVE) {
+            Toast.makeText(this, "取消丟棄", Toast.LENGTH_SHORT).show();
+        } else if (which == AlertDialog.BUTTON_POSITIVE) {
+            //把選取的pokemon info移除
+            for (PokemonInfo pokemonInfo : adapter.selectedPokemon) {
+                adapter.remove(pokemonInfo);
+            }
+            //清除選取的pokemon
+            adapter.selectedPokemon.clear();
+            Toast.makeText(this, "丟棄完畢", Toast.LENGTH_SHORT).show();
+
+        }
+    }
 
     public final static int detailActivityRequestCode = 1;
     public final static int listRemove = 1;
@@ -161,19 +177,5 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
         }
     }
 
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        if (which == AlertDialog.BUTTON_NEGATIVE) {
-            Toast.makeText(this, "取消丟棄", Toast.LENGTH_SHORT).show();
-        } else if (which == AlertDialog.BUTTON_POSITIVE) {
-            //把選取的pokemon info移除
-            for (PokemonInfo pokemonInfo : adapter.selectedPokemon) {
-                adapter.remove(pokemonInfo);
-            }
-            //清除選取的pokemon
-            adapter.selectedPokemon.clear();
-            Toast.makeText(this, "丟棄完畢", Toast.LENGTH_SHORT).show();
 
-        }
-    }
 }
