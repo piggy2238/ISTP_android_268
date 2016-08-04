@@ -68,7 +68,7 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
         //新增一個alertdialog 使用builder的方式建造 生成AlertDialog<靜態函數>
         //訊息//標題//取消此次行為<title,listener>//執行此次行為<title,listener>//對話框可否強制消失<backbutton>//生成
         alertDialog = new AlertDialog.Builder(this)
-                .setMessage("你確定要丟棄選取的神奇寶貝們嗎?")
+                .setMessage("你確定要丟棄選取的神奇寶貝嗎?")
                 .setTitle("警告")
                 .setNegativeButton("取消", this)
                 .setPositiveButton("確定", this)
@@ -100,7 +100,15 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
             return true;
         } else if (itemId == R.id.action_heal) {
             Log.d("menuItem", "action_heal");
-
+            //1.抓取被選取的神奇寶貝
+            //2.更新hp資料 = max hp
+            for (PokemonInfo pokemonInfo : adapter.selectedPokemon) {
+                if(pokemonInfo !=null){
+                    pokemonInfo.currentHP = Integer.valueOf(pokemonInfo.maxHP);
+                    adapter.update(pokemonInfo);
+                    Toast.makeText(this, pokemonInfo.name + "已補血", Toast.LENGTH_SHORT).show();
+                }
+            }
             return true;
         } else if (itemId == R.id.action_setting) {
             Log.d("menuItem", "action_setting");
@@ -121,10 +129,11 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
             //清除選取的pokemon
             adapter.selectedPokemon.clear();
             Toast.makeText(this, "丟棄完畢", Toast.LENGTH_SHORT).show();
-
         }
     }
 
+    ////////////////////////////////////////////////
+    //跳轉到 Detail Activity 並接收Detail Activity 回傳的資料
     public final static int detailActivityRequestCode = 1;
     public final static int listRemove = 1;
     public final static int listLevelup = 2;
