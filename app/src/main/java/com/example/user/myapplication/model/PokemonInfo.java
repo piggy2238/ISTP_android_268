@@ -28,7 +28,7 @@ public class PokemonInfo implements Parcelable {
     public String[] skill = new String[numCurrentSkills];
 
     public boolean isSelected = false;
-    //public boolean isHealing = false;
+    public boolean isHealing = false;
 
 
 

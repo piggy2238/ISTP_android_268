@@ -3,6 +3,10 @@ package com.example.user.myapplication;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 //import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -28,7 +32,8 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
     //宣告變數
     PokemonListViewAdapter adapter;
     AlertDialog alertDialog;
-
+    SoundPool soundPool;
+    int healing_sound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,11 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
                 .setPositiveButton("確定", this)
                 .setCancelable(false)
                 .create();
+
+    ///////////////////////////////////////////////////////////
+
+        soundPool= new SoundPool(1, AudioManager.STREAM_MUSIC,5);
+        healing_sound = soundPool.load(this,R.raw.healing_sound,1);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -100,15 +110,24 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
             return true;
         } else if (itemId == R.id.action_heal) {
             Log.d("menuItem", "action_heal");
+            soundPool.play(healing_sound,1,1,0,0,1);
             //1.抓取被選取的神奇寶貝
             //2.更新hp資料 = max hp
             for (PokemonInfo pokemonInfo : adapter.selectedPokemon) {
                 if(pokemonInfo !=null){
-                    pokemonInfo.currentHP = Integer.valueOf(pokemonInfo.maxHP);
-                    adapter.update(pokemonInfo);
-                    Toast.makeText(this, pokemonInfo.name + "已補血", Toast.LENGTH_SHORT).show();
+                    if(pokemonInfo.currentHP != pokemonInfo.maxHP) {
+                        pokemonInfo.currentHP = Integer.valueOf(pokemonInfo.maxHP);
+                        adapter.update(pokemonInfo);
+                        Toast.makeText(this, pokemonInfo.name + "已補血", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(this, pokemonInfo.name + "滿血中", Toast.LENGTH_SHORT).show();
+                    }
+                    pokemonInfo.isSelected = false;
                 }
             }
+            //清除選取的pokemon
+            adapter.selectedPokemon.clear();
+
             return true;
         } else if (itemId == R.id.action_setting) {
             Log.d("menuItem", "action_setting");
