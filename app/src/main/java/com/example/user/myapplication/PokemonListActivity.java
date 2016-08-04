@@ -1,7 +1,10 @@
 package com.example.user.myapplication;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+//import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -21,10 +24,10 @@ import java.util.ArrayList;
 /**
  * Created by user on 2016/7/25.
  */
-public class PokemonListActivity extends CustomizedActivity implements AdapterView.OnItemClickListener{
+public class PokemonListActivity extends CustomizedActivity implements AdapterView.OnItemClickListener,DialogInterface.OnClickListener {
     //宣告變數
     PokemonListViewAdapter adapter;
-
+    AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +35,7 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
         setContentView(R.layout.activity_pokemon_list); //Setting Layout
 
         //找listview 物件,設定變數  (類型) findViewById (Layout.id)
-        ListView listview= (ListView)findViewById(R.id.listView);
+        ListView listview = (ListView) findViewById(R.id.listView);
 
         //把資料丟到工具(model)中
         OwningPokemonDataManager dataManager = new OwningPokemonDataManager(this);
@@ -53,44 +56,53 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
         listview.setAdapter(adapter);
         listview.setOnItemClickListener(this);
 
-
+        //新增一個alertdialog 使用builder的方式建造 生成AlertDialog<靜態函數>
+        //訊息//標題//取消此次行為<title,listener>//執行此次行為<title,listener>//對話框可否強制消失<backbutton>//生成
+        alertDialog = new AlertDialog.Builder(this)
+                .setMessage("你確定要丟棄選取的神奇寶貝們嗎?")
+                .setTitle("警告")
+                .setNegativeButton("取消", this)
+                .setPositiveButton("確定", this)
+                .setCancelable(false)
+                .create();
     }
-///////////////////////////////////////////////////////////////////////
-    //Setting Action bar
+
+    ///////////////////////////////////////////////////////////////////////
+    //Setting Action bar 增加AlertDialog 使原function多一層確認
     ////1.在Activity加入action bar (導入xml)
-    ////2.設定Action bar 選取後的功能
+    ////2.Action bar 選取後要先跳出AlertDialog
+    ////3.重新撰寫取消及確定執行的function
+    ////4.取消>>回覆前介面 // 確定 >> 執行該功能
     //加入action bar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.list_action_bar_menu,menu);
+        getMenuInflater().inflate(R.menu.list_action_bar_menu, menu);
         return true; //表示一定會顯示action bar的畫面
     }
+
     //2.設定Action bar 選取後的功能
     //設定點選不同icon的邏輯
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
-        if (itemId == R.id.action_delete){
+        if (itemId == R.id.action_delete) {
             Log.d("menuItem", "action_delete");
-            for(PokemonInfo pokemonInfo: adapter.selectedPokemon){
-                adapter.remove(pokemonInfo);
-            }
-            //把選取的pokemon info移除
+            alertDialog.show();
             return true;
-        }else if(itemId == R.id.action_heal){
+        } else if (itemId == R.id.action_heal) {
             Log.d("menuItem", "action_heal");
             return true;
-        }else if(itemId == R.id.action_setting){
+        } else if (itemId == R.id.action_setting) {
             Log.d("menuItem", "action_setting");
             return true;
         }
-           return false;
+        return false;
     }
 
 
-        public final static int detailActivityRequestCode = 1;
-        public final static int listRemove = 1;
-        public final static int listLevelup = 2;
+    public final static int detailActivityRequestCode = 1;
+    public final static int listRemove = 1;
+    public final static int listLevelup = 2;
 
     //把pokemoninfo拿出來後產生intent
     @Override
@@ -104,7 +116,7 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == listRemove){
+        if (resultCode == listRemove) {
             //1.接收要刪除的pokemon name 與 key
             String nameToRemove = data.getStringExtra(PokemonInfo.nameKey);
 
@@ -113,12 +125,12 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
             PokemonInfo pokemonInfo = adapter.getItemWithName(nameToRemove);
 
             //3.執行刪除動作並通知使用者
-            if (pokemonInfo!=null){
+            if (pokemonInfo != null) {
                 adapter.remove(pokemonInfo);
-                Toast.makeText(this,pokemonInfo.name+"已存入電腦中",Toast.LENGTH_LONG).show();
+                Toast.makeText(this, pokemonInfo.name + "已存入電腦中", Toast.LENGTH_LONG).show();
             }
 
-        }else if(resultCode == listLevelup){
+        } else if (resultCode == listLevelup) {
             //1.接收要刪除的pokemon name 與 key
             String nameToRemove = data.getStringExtra(PokemonInfo.nameKey);
 
@@ -127,17 +139,32 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
             PokemonInfo pokemonInfo = adapter.getItemWithName(nameToRemove);
 
             //3.執行LevelUp並通知使用者
-            if (pokemonInfo!=null){
+            if (pokemonInfo != null) {
                 //被選到的pokemon level +1
-                int level=Integer.valueOf(pokemonInfo.level);
-                level+=1;
+                int level = Integer.valueOf(pokemonInfo.level);
+                level += 1;
                 pokemonInfo.level = level;
                 //更新pokemon資訊
                 adapter.update(pokemonInfo);
-                Toast.makeText(this,pokemonInfo.name+"已升級",Toast.LENGTH_LONG).show();
+                Toast.makeText(this, pokemonInfo.name + "已升級", Toast.LENGTH_LONG).show();
             }
 
         }
     }
 
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        if (which == AlertDialog.BUTTON_NEGATIVE) {
+            Toast.makeText(this, "取消丟棄", Toast.LENGTH_SHORT).show();
+        } else if (which == AlertDialog.BUTTON_POSITIVE) {
+            //把選取的pokemon info移除
+            for (PokemonInfo pokemonInfo : adapter.selectedPokemon) {
+                adapter.remove(pokemonInfo);
+            }
+            //清除選取的pokemon
+            adapter.selectedPokemon.clear();
+            Toast.makeText(this, "丟棄完畢", Toast.LENGTH_SHORT).show();
+
+        }
+    }
 }
