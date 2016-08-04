@@ -110,7 +110,7 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
             return true;
         } else if (itemId == R.id.action_heal) {
             Log.d("menuItem", "action_heal");
-            soundPool.play(healing_sound,1,1,0,0,1);
+            soundPool.play(healing_sound,1,1,0,0,0);
             //1.抓取被選取的神奇寶貝
             //2.更新hp資料 = max hp
             for (PokemonInfo pokemonInfo : adapter.selectedPokemon) {

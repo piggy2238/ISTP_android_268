@@ -2,6 +2,8 @@ package com.example.user.myapplication;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -37,6 +39,9 @@ public class PokemonDetailActivity extends CustomizedActivity {
     ProgressBar hbBar;
     Picasso mPicasso;
 
+    //音效
+    SoundPool soundPool;
+    int level_up_sound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -56,6 +61,10 @@ public class PokemonDetailActivity extends CustomizedActivity {
 
         //一般create
             setView();
+
+        //導入音效
+        soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC,5);
+        level_up_sound = soundPool.load(this,R.raw.level_up_sound,1);
     }
 
 
@@ -160,6 +169,7 @@ public class PokemonDetailActivity extends CustomizedActivity {
              level+=1;
 
             //3.存回原始紀錄
+            soundPool.play(level_up_sound,1,1,0,0,0);
             levelText.setText(String.valueOf(level));
             Toast.makeText(this,"恭喜升級",Toast.LENGTH_SHORT).show();
 
