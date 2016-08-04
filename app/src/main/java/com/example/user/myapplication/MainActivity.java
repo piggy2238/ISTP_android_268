@@ -16,6 +16,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.os.Handler;
+import android.widget.Toast;
+
 import com.example.user.myapplication.model.OwningPokemonDataManager;
 import com.example.user.myapplication.model.PokemonInfo;
 
@@ -35,7 +37,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
         "小火龍","傑尼龜","妙蛙種子"
     };
     Button confirm_button;
-    int changeActivityInSecs = 0; //延遲進入的秒數
+    int changeActivityInSecs = 3; //延遲進入的秒數
     ProgressBar progressBar;
 
     //利用SharePreference 進行偏好設定, 以下為所需變數
@@ -47,6 +49,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
     //Setting UI 狀態
     public enum UISetting{Initial, DataIsKnown}
     UISetting uiSetting;
+
 //  程式初始化
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +114,8 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
             confirm_button.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.INVISIBLE);
         }
+        //測試是否成功進入App
+        //Toast.makeText(this,"這是首頁",Toast.LENGTH_LONG).show();
     }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,7 +124,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
         //針對原使用者
         if(uiSetting == UISetting.DataIsKnown){
             infoText.setText(String.format("你好, 訓練家%s 歡迎回到神奇寶貝的世界,你的夥伴是%s,冒險即將於%d秒鐘之後繼續",
-                    name_editText.getText().toString(),
+                    nameOfTheTrainer,
                     pokemonNames[selectedOptionIndex],
                     changeActivityInSecs));
 
@@ -153,6 +158,15 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
                 editor.putInt(optionSelectedKey,selectedOptionIndex);
                 //紀錄為版本,成功存入
                 editor.commit();
+                Toast.makeText(this,"使用者資料已存入",Toast.LENGTH_LONG).show();
+                //點確認後,把介面用好看一點
+                //隱藏組
+                name_editText.setVisibility(View.INVISIBLE);
+                optionGrp.setVisibility(View.INVISIBLE);
+                confirm_button.setVisibility(View.INVISIBLE);
+                //顯示組
+                progressBar.setVisibility(View.VISIBLE);
+
             }
 
 
