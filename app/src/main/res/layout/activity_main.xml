@@ -26,12 +26,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="請輸入你的個人資訊"
+            android:text="請輸入你的個人資訊\n並選一隻神奇寶貝成為你的夥伴"
             android:id="@+id/infoText"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
             android:textSize="20dp"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="15dp" />
 
         <EditText
             android:layout_width="wrap_content"
@@ -45,7 +46,7 @@
         <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_below="@+id/name_editText"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
@@ -54,21 +55,28 @@
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="小火龍"
                 android:id="@+id/option1"
-                android:checked="true" />
+                android:drawableRight="@drawable/charmander_thumbnail"
+                android:checked="true"
+                android:paddingLeft="-20dp"
+                android:paddingRight="-10dp"/>
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="傑尼龜"
-                android:id="@+id/option2" />
+                android:id="@+id/option2"
+                android:drawableRight="@drawable/squirtle_thumbnail"
+                android:paddingLeft="-20dp"
+                android:paddingRight="-10dp"/>
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="妙蛙種子"
-                android:id="@+id/option3" />
+                android:id="@+id/option3"
+                android:drawableRight="@drawable/bulbasaur_thumbnail"
+                android:paddingLeft="-20dp"
+                android:paddingRight="-10dp"/>
+
         </RadioGroup>
 
         <Button
