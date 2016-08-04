@@ -14,8 +14,10 @@ public class OwningPokemonDataManager {
     Context mContext;
     Resources mRes;
     String packageName;
-    ArrayList<PokemonInfo> pokemonInfos;
-    ArrayList<String> pokemonNames;
+    ArrayList<PokemonInfo> pokemonInfos = null;
+    ArrayList<String> pokemonNames = null ;
+    PokemonInfo[] initThreePokemonInfos = new PokemonInfo[3];
+    static final int skill_startIndex = 7;
 
     public OwningPokemonDataManager(Context context) {
         mContext = context;
@@ -33,6 +35,7 @@ public class OwningPokemonDataManager {
         pokemonInfos = new ArrayList<>();
         BufferedReader reader;
         String line = null;
+        String[] dataFields = null;
         try {
             //引用神奇寶貝類型資料
             //引用原始資料
@@ -41,25 +44,19 @@ public class OwningPokemonDataManager {
             PokemonInfo.typeNames = reader.readLine().split(",");
             reader.close();
 
+            //飲用使用這選擇的神奇寶貝夥伴
+            reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open("init_pokemon_data.csv")));
+            for (int i = 0; i<3 ; i++){
+                dataFields = reader.readLine().split(",");
+                initThreePokemonInfos[i] = constructPokemonInfo(dataFields);
+            }
+            reader.close();
+
             //引用神奇寶貝詳細資料
             reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open("pokemon_data.csv")));
-            int skill_startIndex = 7;
             while ((line = reader.readLine()) != null) {
-                String[] dataFields = line.split(",");
-                PokemonInfo pokemonInfo = new PokemonInfo();
-                pokemonInfo.detailImgId = mRes.getIdentifier("detail_" + dataFields[0],"drawable",packageName);
-                pokemonInfo.imgId = mRes.getIdentifier("list_" + dataFields[0],"drawable",packageName);
-                pokemonInfo.name = dataFields[1];
-                pokemonInfo.level = Integer.valueOf(dataFields[2]);
-                pokemonInfo.currentHP = Integer.valueOf(dataFields[3]);
-                pokemonInfo.maxHP = Integer.valueOf(dataFields[4]);
-                pokemonInfo.type_1 = Integer.valueOf(dataFields[5]);
-                pokemonInfo.type_2 = Integer.valueOf(dataFields[6]);
-                //if strings are not enough, rest of array index would point to null.
-                for(int i = skill_startIndex;i < dataFields.length;i++) {
-                    pokemonInfo.skill[i - skill_startIndex] = dataFields[i];
-                }
-                pokemonInfos.add(pokemonInfo);
+                dataFields = line.split(",");
+                pokemonInfos.add(constructPokemonInfo(dataFields));
             }
             reader.close();
         }
@@ -70,6 +67,25 @@ public class OwningPokemonDataManager {
 
     }
 
+    private PokemonInfo constructPokemonInfo(String[] dataFields){
+        PokemonInfo pokemonInfo = new PokemonInfo();
+        pokemonInfo.detailImgId = mRes.getIdentifier("detail_" + dataFields[0],"drawable",packageName);
+        pokemonInfo.imgId = mRes.getIdentifier("list_" + dataFields[0],"drawable",packageName);
+        pokemonInfo.name = dataFields[1];
+        pokemonInfo.level = Integer.valueOf(dataFields[2]);
+        pokemonInfo.currentHP = Integer.valueOf(dataFields[3]);
+        pokemonInfo.maxHP = Integer.valueOf(dataFields[4]);
+        pokemonInfo.type_1 = Integer.valueOf(dataFields[5]);
+        pokemonInfo.type_2 = Integer.valueOf(dataFields[6]);
+        //if strings are not enough, rest of array index would point to null.
+        for(int i = skill_startIndex;i < dataFields.length;i++) {
+            pokemonInfo.skill[i - skill_startIndex] = dataFields[i];
+        }
+
+        return pokemonInfo;
+
+
+    }
 
     public ArrayList<String> getPokemonNames() {
         return pokemonNames;
@@ -79,5 +95,7 @@ public class OwningPokemonDataManager {
         return pokemonInfos;
     }
 
-
+    public PokemonInfo[] getInitThreePokemonInfos(){
+        return initThreePokemonInfos;
+    }
 }

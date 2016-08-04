@@ -29,6 +29,7 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
     PokemonListViewAdapter adapter;
     AlertDialog alertDialog;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,25 +38,33 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
         //找listview 物件,設定變數  (類型) findViewById (Layout.id)
         ListView listview = (ListView) findViewById(R.id.listView);
 
-        //把資料丟到工具(model)中
+    ////////////////////////////////////////////////////////////
+        //讀取資料
+        //1.把資料丟到工具(model)中
         OwningPokemonDataManager dataManager = new OwningPokemonDataManager(this);
 
 
-        //複雜板listView:1.建立pokemon_data與Pokemon的資料結構 2.建立Layout file
-        //接收工具(model)使用的結果
-        ArrayList<PokemonInfo> pokemonInfos = dataManager.getPokemonInfos();
+        //2.使用者所選擇的神奇寶貝
+        int selectedOptionIndex = getIntent().getIntExtra(MainActivity.optionSelectedKey,0);
 
+        //3.接收處理過的資料(大量神奇寶貝資訊與起始的三隻神奇寶貝資料)
+        //3-1.接收起始的預設大量神奇寶貝資料
+        ArrayList<PokemonInfo> pokemonInfos = dataManager.getPokemonInfos();
+        //3-2.先接收三隻起始的神奇寶貝資料,再根據使用者的選擇加入指定的神奇寶貝資料
+        PokemonInfo[] initThreePokemons = dataManager.getInitThreePokemonInfos();
+        pokemonInfos.add(0,initThreePokemons[selectedOptionIndex]);
+
+    /////////////////////////////////////////////////////////
         //設定Adapter
         adapter = new PokemonListViewAdapter(
                 this, //context
                 R.layout.row_view_pokemon_list, //row view layout id(file_name)
                 pokemonInfos); //data
-
-
         //將Adapter設定到listview上
         listview.setAdapter(adapter);
         listview.setOnItemClickListener(this);
-
+    ////////////////////////////////////////////////////////////
+        //AlertDialog
         //新增一個alertdialog 使用builder的方式建造 生成AlertDialog<靜態函數>
         //訊息//標題//取消此次行為<title,listener>//執行此次行為<title,listener>//對話框可否強制消失<backbutton>//生成
         alertDialog = new AlertDialog.Builder(this)

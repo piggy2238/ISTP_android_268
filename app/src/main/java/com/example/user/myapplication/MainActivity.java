@@ -180,6 +180,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
                 @Override
                 public void run() {
                     Intent intent = new Intent(MainActivity.this,PokemonListActivity.class);
+                    intent.putExtra(optionSelectedKey,selectedOptionIndex);
                     startActivity(intent);
                     MainActivity.this.finish();
                 }
