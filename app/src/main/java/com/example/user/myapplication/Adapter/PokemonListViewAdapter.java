@@ -181,4 +181,10 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
         notifyDataSetChanged();
     }
 
+////////////////////////////////////////////////////////////////////
+    public void remove(PokemonInfo object){
+        selectedPokemon.remove(object);
+        super.remove(object);
+    }
+
 }

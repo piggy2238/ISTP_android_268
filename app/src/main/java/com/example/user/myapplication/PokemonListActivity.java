@@ -108,7 +108,9 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
         int itemId = item.getItemId();
         if (itemId == R.id.action_delete) {
             Log.d("menuItem", "action_delete");
-            alertDialog.show();
+            if(adapter.selectedPokemon.size()>0) {
+                alertDialog.show();
+            }
             return true;
         } else if (itemId == R.id.action_heal) {
             Log.d("menuItem", "action_heal");
