@@ -1,14 +1,20 @@
 package com.example.user.myapplication.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.ListView;
 
 import com.example.user.myapplication.MainActivity;
+import com.example.user.myapplication.R;
+import com.example.user.myapplication.adapter.PokemonListViewAdapter;
 import com.example.user.myapplication.model.OwningPokemonDataManager;
 import com.example.user.myapplication.model.PokemonInfo;
 
@@ -23,6 +29,8 @@ public class PokemonListFragment extends Fragment {
     //宣告變數
     private Activity activity;
     ArrayList<PokemonInfo> pokemonInfos;
+    private PokemonListViewAdapter adapter;
+    private AlertDialog alertDialog;
 
     //建立一個fragment樣板
     public static PokemonListFragment newInstance(){
@@ -53,6 +61,34 @@ public class PokemonListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        //Find View (寫法與Activity不同)
+        View fragmentView = inflater.inflate(R.layout.activity_pokemon_list,container,false);
+        ListView listView = (ListView)fragmentView.findViewById(R.id.listView);
+
+        //Setting Adapter
+        adapter = new PokemonListViewAdapter(
+                activity, //context
+                R.layout.row_view_pokemon_list, //row view layout id(file_name)
+                pokemonInfos); //data
+        //將Adapter設定到listview上
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
+
+        //Setting Dialog
+        alertDialog = new AlertDialog.Builder(this)
+                .setMessage("你確定要丟棄選取的神奇寶貝嗎?")
+                .setTitle("警告")
+                .setNegativeButton("取消", this)
+                .setPositiveButton("確定", this)
+                .setCancelable(false)
+                .create();
+
+        //顯示OptionMenu
+        setHasOptionsMenu(true);
+
+        return fragmentView;
     }
+
+
+
 }
