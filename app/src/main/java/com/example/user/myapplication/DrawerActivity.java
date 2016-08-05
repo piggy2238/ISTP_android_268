@@ -1,5 +1,8 @@
 package com.example.user.myapplication;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -8,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.example.user.myapplication.fragment.PokemonListFragment;
+import com.example.user.myapplication.fragment.TestFragment;
 import com.example.user.myapplication.model.Utils;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -20,16 +25,20 @@ import com.mikepenz.materialdrawer.model.utils.BadgeDrawableBuilder;
 
 /**
  * Created by User on 2016/8/5.
+ * 第一階段 完成基本的drawer 顯示  (未標示何時建構,極為第一階段建構)
+ * 第二階段 管理PokemonListFragment (將另外標示為第二階段)
+ * 第三階段 完備整個drawer的功能
  */
 public class DrawerActivity extends AppCompatActivity {
 
-    //宣告變數
+    //第一階段宣告變數
     Toolbar toolbar;
     IProfile profile;
     AccountHeader headerResult;
     Drawer drawer;
-
-
+    //第二階段
+    Fragment[] fragment;
+    FragmentManager fragmentManager;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +70,21 @@ public class DrawerActivity extends AppCompatActivity {
                 })
                 .withSavedInstance(savedInstanceState)
                 .build();
+        ///////////////////////////////////////////////////////////////////////////
+        //第二階段
+        /*架構Fragment 空間分配及內容
+        * 第一層放PokemonListFragment
+        * 第二層放TestFragment,內容為Fake 2
+        * 第三層放TestFragment,內容為Fake 3*/
+        fragment = new Fragment[3];
+        fragment[0] = PokemonListFragment.newInstance();
+        fragment[1] = TestFragment.newInstance("Fake 2");
+        fragment[2] = TestFragment.newInstance("Fake 3");
+
+        /*遵循task(先進後出的資料結構),將資料倒序放入FragmentManager中*/
+        for(int i=fragment.length-1; i>=0; i--){
+            replaceWithFragment(fragment[i]);
+        }
     }
 
 /*建構Drawer中的header
@@ -75,5 +99,20 @@ public class DrawerActivity extends AppCompatActivity {
                 .addProfiles(profile)
                 .withSavedInstance(saveInstanceState)
                 .build();
+    }
+    /*第二階段：動態操作Fragment 透過FragmentManager來啟動每一個Transaction
+    * 將頁面顯示替換成Fragment
+    * 1.取得物件
+    * 2.操作想要做的動作 (replace),需要兩個參數:1).存在的fragID.2).新的fragID
+    * 3.是否記錄各個commit的順序 (與backbutton的操作有關)
+    * 4.任何變動都需要存入comit才會生效
+    * */
+    private void replaceWithFragment (Fragment fragment){
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        //Start: operate fragment in transaction, such as add,remove,replace,......
+        transaction.replace(R.id.fragmentContainer,fragment);
+        transaction.addToBackStack(null);
+        //End
+        transaction.commit();
     }
 }
