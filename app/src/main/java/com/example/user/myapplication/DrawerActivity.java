@@ -76,12 +76,14 @@ public class DrawerActivity extends AppCompatActivity {
         * 第一層放PokemonListFragment
         * 第二層放TestFragment,內容為Fake 2
         * 第三層放TestFragment,內容為Fake 3*/
+
         fragment = new Fragment[3];
         fragment[0] = PokemonListFragment.newInstance();
         fragment[1] = TestFragment.newInstance("Fake 2");
         fragment[2] = TestFragment.newInstance("Fake 3");
 
         /*遵循task(先進後出的資料結構),將資料倒序放入FragmentManager中*/
+        fragmentManager = getFragmentManager();
         for(int i=fragment.length-1; i>=0; i--){
             replaceWithFragment(fragment[i]);
         }
