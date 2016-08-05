@@ -163,9 +163,8 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
     ///////////////////////////////////////////////////////////////////////
     //Action Bar Change to Drawer
     @Override
-    public boolean onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.pokemon_detail_action_bar_menu,menu);
-        return true; //表示一定會顯示action bar的畫面
     }
 
     @Override
