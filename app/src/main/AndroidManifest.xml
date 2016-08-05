@@ -30,13 +30,14 @@
             <!--</intent-filter>-->
         </activity>
         <activity android:name=".FragmentTestActivity">
-            <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity android:name=".DrawerActivity"
             android:theme="@style/MaterialDrawerTheme.Light.DarkToolbar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
     </application>
