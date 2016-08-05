@@ -9,7 +9,7 @@ import android.os.Build;
 /**
  * Created by User on 2016/8/5. 目的:建立一些可利用於drawable的素材連結
  */
-public class Util {
+public class Utils {
 
     public static Drawable getDrawble(Context context, int drawableId){
         if (Build.VERSION.SDK_INT < 21){
