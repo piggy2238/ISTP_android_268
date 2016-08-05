@@ -23,10 +23,13 @@ public class TestFragment extends LogFragment {
     public static final String contentKey = "TestFragment.content";
     private String mContent;
 
-
+/*建立fragment樣板
+*
+* */
     public static TestFragment newInstance(String content){
 
         TestFragment fragment = new TestFragment();
+        //Supply index input as an argument.
         Bundle bundle = new Bundle();
         bundle.putString(contentKey,content);
         fragment.setArguments(bundle);
