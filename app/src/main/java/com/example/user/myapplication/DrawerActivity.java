@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -44,9 +45,15 @@ public class DrawerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer);
 
+        ///////////////////////////////////////////////////////////////////////////
+        //第一階段
+        /*1.建立 Drawer 外觀、假資料、build起來
+         *2.建立 DrawerItemListener 從 DrawerItem 點選時可以更換 Fragment的內容
+         */
         // Set a Toolbar to replace the ActionBar.
         // so it would be laid below the drawer when the drawer comes out
         toolbar = (Toolbar)findViewById(R.id.toolbar);
+        //放入actionbar那行
         setSupportActionBar(toolbar);
 
         //Set Profile
@@ -89,6 +96,8 @@ public class DrawerActivity extends AppCompatActivity {
         for(int i=fragment.length-1; i>=0; i--){
             replaceWithFragment(fragment[i]);
         }
+
+
     }
 
 /*建構Drawer中的header
@@ -118,5 +127,27 @@ public class DrawerActivity extends AppCompatActivity {
         transaction.addToBackStack(null);
         //End
         transaction.commit();
+    }
+
+
+    /*保留選取狀態及 commit 順序*/
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState = drawer.saveInstanceState(outState);
+        outState = headerResult.saveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    //按下BackButton 讓 drawer 收起來
+    @Override
+    public void onBackPressed() {
+
+        if (drawer != null && drawer.isDrawerOpen()){
+            drawer.closeDrawer();
+        }else if (fragmentManager.getBackStackEntryCount()>0){
+            fragmentManager.popBackStack();
+        }else {
+            super.onBackPressed();
+        }
     }
 }
