@@ -5,8 +5,6 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -21,13 +19,15 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.mikepenz.materialdrawer.model.utils.BadgeDrawableBuilder;
 
 /**
  * Created by User on 2016/8/5.
  * 第一階段 完成基本的drawer 顯示  (未標示何時建構,極為第一階段建構)
  * 第二階段 管理PokemonListFragment (將另外標示為第二階段)
  * 第三階段 完備整個drawer的功能
+ * 2016/8/8.
+ * 新增backbutton的功能
+ *
  */
 public class DrawerActivity extends AppCompatActivity {
 
@@ -40,7 +40,7 @@ public class DrawerActivity extends AppCompatActivity {
     Fragment[] fragment;
     FragmentManager fragmentManager;
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer);
 
@@ -66,6 +66,7 @@ public class DrawerActivity extends AppCompatActivity {
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        replaceWithFragment(fragment[position-1]);
                         return false;
                     }
                 })
