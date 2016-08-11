@@ -17,7 +17,7 @@ public class OwningPokemonDataManager {
     ArrayList<PokemonInfo> pokemonInfos = null;
     ArrayList<String> pokemonNames = null ;
     PokemonInfo[] initThreePokemonInfos = new PokemonInfo[3];
-    static final int skill_startIndex = 7;
+    static final int skill_startIndex = 8;
 
     public OwningPokemonDataManager(Context context) {
         mContext = context;
@@ -69,14 +69,14 @@ public class OwningPokemonDataManager {
 
     private PokemonInfo constructPokemonInfo(String[] dataFields){
         PokemonInfo pokemonInfo = new PokemonInfo();
-        pokemonInfo.detailImgId = mRes.getIdentifier("detail_" + dataFields[0],"drawable",packageName);
-        pokemonInfo.imgId = mRes.getIdentifier("list_" + dataFields[0],"drawable",packageName);
-        pokemonInfo.name = dataFields[1];
-        pokemonInfo.level = Integer.valueOf(dataFields[2]);
-        pokemonInfo.currentHP = Integer.valueOf(dataFields[3]);
-        pokemonInfo.maxHP = Integer.valueOf(dataFields[4]);
-        pokemonInfo.type_1 = Integer.valueOf(dataFields[5]);
-        pokemonInfo.type_2 = Integer.valueOf(dataFields[6]);
+        pokemonInfo.detailImgId = mRes.getIdentifier("detail_" + dataFields[1],"drawable",packageName);
+        pokemonInfo.imgId = mRes.getIdentifier("list_" + dataFields[1],"drawable",packageName);
+        pokemonInfo.name = dataFields[2];
+        pokemonInfo.level = Integer.valueOf(dataFields[3]);
+        pokemonInfo.currentHP = Integer.valueOf(dataFields[4]);
+        pokemonInfo.maxHP = Integer.valueOf(dataFields[5]);
+        pokemonInfo.type_1 = Integer.valueOf(dataFields[6]);
+        pokemonInfo.type_2 = Integer.valueOf(dataFields[7]);
         //if strings are not enough, rest of array index would point to null.
         for(int i = skill_startIndex;i < dataFields.length;i++) {
             pokemonInfo.skill[i - skill_startIndex] = dataFields[i];
