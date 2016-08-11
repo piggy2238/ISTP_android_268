@@ -20,6 +20,9 @@ import android.widget.Toast;
 
 import com.example.user.myapplication.model.OwningPokemonDataManager;
 import com.example.user.myapplication.model.PokemonInfo;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.login.widget.LoginButton;
 
 import java.util.ArrayList;
 
@@ -50,11 +53,18 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
     public enum UISetting{Initial, DataIsKnown}
     UISetting uiSetting;
 
+    //新增FB AccessToken 所需要的 key 以及 宣告變數
+    public final static String profileImgUrlKey = "profileImgUrlKey";
+    public final static String emailKey = "emailKey";
+    LoginButton loginButton;
+    CallbackManager callbackManager;
+    AccessToken accessToken; //用來要求某些資料的權限
+
 //  程式初始化
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);//選擇要使用的Layout
+        setContentView(R.layout.activity_myapplication);//選擇要使用的Layout
 
         //透過id設定各Activity中的物件與xml的物件結合
         //如有需要根據各項目需求要設定其listener
@@ -65,8 +75,33 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
         optionGrp.setOnCheckedChangeListener(this);
 
         infoText = (TextView) findViewById(R.id.infoText);
-        name_editText = (EditText) findViewById(R.id.name_editText);
-        name_editText.setOnEditorActionListener(this);
+        /*已改用 FB 帳號登入*/
+//        name_editText = (EditText) findViewById(R.id.name_editText);
+//        name_editText.setOnEditorActionListener(this);
+
+        /* 使用FB帳號登入
+         * 1.判斷accessToken 是否存在
+         * 2.如果不存在須清除掉Key 避免拿到舊資料
+          * */
+        AccessToken currentToken;
+        currentToken = AccessToken.getCurrentAccessToken();
+        if( currentToken != null ){
+            accessToken = currentToken;
+        }else{
+            //針對preference 進行修改
+            SharedPreferences.Editor editor = preferences.edit();
+            //舊資料移除
+            editor.remove(nameEditTextKey);
+            editor.remove(profileImgUrlKey);
+            editor.remove(emailKey);
+            editor.commit();
+            //確保 accessToken是空的
+            accessToken = null;
+        }
+
+        /*註冊 loginButton */
+        loginButton = (LoginButton)findViewById(R.id.login_button);
+
 
         //Setting ProgressBar
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
@@ -77,12 +112,13 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
                 .strokeWidth(8f)
                 .build());
 
-        //判定是否為第一次的使用者
-        //1.抓入偏好設定資料
-        //2.抓偏好設定資料中_訓練家姓名
-        //3.抓偏好設定資料中_第一隻神奇寶貝名字
-        //4.判定是否為第一次使用者 (根據訓練家姓名是否為null為依據)
-        //5.UI 狀態設定好以後再呼叫新的function 決定螢幕顯示狀況
+        /*判定是否為第一次的使用者
+        *1.抓入偏好設定資料
+        *2.抓偏好設定資料中_訓練家姓名
+        *3.抓偏好設定資料中_第一隻神奇寶貝名字
+        *4.判定是否為第一次使用者 (根據訓練家姓名是否為null為依據)
+        *5.UI 狀態設定好以後再呼叫新的function 決定螢幕顯示狀況
+        */
         preferences = getSharedPreferences(Application.class.getName(),MODE_PRIVATE);
         selectedOptionIndex = preferences.getInt(optionSelectedKey,selectedOptionIndex);
         nameOfTheTrainer = preferences.getString(nameEditTextKey,nameOfTheTrainer);
@@ -92,6 +128,9 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
             uiSetting = UISetting.DataIsKnown;
         }
         changeUIAccordingToRecord();
+
+
+
 
     }
 
