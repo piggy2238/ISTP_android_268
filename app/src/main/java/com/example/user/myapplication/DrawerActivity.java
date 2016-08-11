@@ -5,7 +5,6 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -30,14 +29,14 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
  * 新增backbutton的功能
  *
  */
-public class DrawerActivity extends AppCompatActivity {
+public class DrawerActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener{
 
     //第一階段宣告變數
     Toolbar toolbar;
     IProfile profile;
     AccountHeader headerResult;
     Drawer drawer;
-    //第二階段
+    //第二階段- 加上 ListActivity 的內容,所需的容器
     Fragment[] fragment;
     FragmentManager fragmentManager;
     @Override
@@ -97,7 +96,8 @@ public class DrawerActivity extends AppCompatActivity {
             replaceWithFragment(fragment[i]);
         }
 
-
+        //建構fragmentManager 的 BackStack改變的 Listener
+        fragmentManager.addOnBackStackChangedListener(this);
     }
 
 /*建構Drawer中的header
@@ -129,7 +129,6 @@ public class DrawerActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-
     /*保留選取狀態及 commit 順序*/
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -148,6 +147,21 @@ public class DrawerActivity extends AppCompatActivity {
             fragmentManager.popBackStack();
         }else {
             super.onBackPressed();
+        }
+    }
+
+    /*fragment 的顯示 要跟 Drawer Item 顯示標題一樣
+     * drawer.setSelectionAtPosition(index, boolean) 利用調整drawer
+     * boolean  : 填寫是否同時呼叫listener
+     * */
+    @Override
+    public void onBackStackChanged() {
+        for (int i = 0; i < fragment.length ; i++){
+            //當 fragment 是可見的時候才需要讓 drawer 的位置同步
+            if(fragment[i].isVisible()) {
+                drawer.setSelectionAtPosition(i + 1, false);
+                break;
+            }
         }
     }
 }
