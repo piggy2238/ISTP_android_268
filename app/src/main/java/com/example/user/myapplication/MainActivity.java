@@ -72,7 +72,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);//選擇要使用的Layout
+        setContentView(R.layout.activity_myapplication);//選擇要使用的Layout
 
         //透過id設定各Activity中的物件與xml的物件結合
         //如有需要根據各項目需求要設定其listener
