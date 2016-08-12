@@ -22,7 +22,14 @@ import com.example.user.myapplication.model.OwningPokemonDataManager;
 import com.example.user.myapplication.model.PokemonInfo;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -34,7 +41,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
 //  設定使用變數:類別 名稱與內容
     TextView infoText;
     RadioGroup optionGrp;
-    EditText name_editText;
+//    EditText name_editText; 改用 FB 帳號登入
     int selectedOptionIndex = 0;
     String[] pokemonNames = new String[]{
         "小火龍","傑尼龜","妙蛙種子"
@@ -45,7 +52,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
 
     //利用SharePreference 進行偏好設定, 以下為所需變數
     SharedPreferences preferences;
-    String nameOfTheTrainer;
+    String nameOfTheTrainer = null;
     public final static String optionSelectedKey = "selection";
     public final static String nameEditTextKey = "nameOfTheTrainer";
 
@@ -57,7 +64,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
     public final static String profileImgUrlKey = "profileImgUrlKey";
     public final static String emailKey = "emailKey";
     LoginButton loginButton;
-    CallbackManager callbackManager;
+    CallbackManager callbackManager; //FB 的登入是透過 FB APP 要資料後回傳, 所以要用 callbackManager 去接值
     AccessToken accessToken; //用來要求某些資料的權限
 
 //  程式初始化
@@ -101,7 +108,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
 
         /*註冊 loginButton */
         loginButton = (LoginButton)findViewById(R.id.login_button);
-
+        setupFBLogin(); //設定按下 FBLOGIN 按鈕後要執行 動作
 
         //Setting ProgressBar
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
@@ -139,7 +146,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
     private void changeUIAccordingToRecord(){
         if(uiSetting == UISetting.DataIsKnown){
          //隱藏組
-           name_editText.setVisibility(View.INVISIBLE);
+//           name_editText.setVisibility(View.INVISIBLE);
            optionGrp.setVisibility(View.INVISIBLE);
            confirm_button.setVisibility(View.INVISIBLE);
          //顯示組
@@ -148,7 +155,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
             confirm_button.performClick();
         }else{
          //隱藏的顯示,顯示的隱藏
-            name_editText.setVisibility(View.VISIBLE);
+//            name_editText.setVisibility(View.VISIBLE);
             optionGrp.setVisibility(View.VISIBLE);
             confirm_button.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.INVISIBLE);
@@ -169,7 +176,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
 
         }else{
             infoText.setText(String.format("你好, 訓練家%s 歡迎來到神奇寶貝的世界,你的夥伴是%s,冒險即將於%d秒鐘之後開始",
-                    name_editText.getText().toString(),
+//                    name_editText.getText().toString(),
                     pokemonNames[selectedOptionIndex],
                     changeActivityInSecs
             ));
@@ -189,7 +196,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
             v.setClickable(false);
             //0.判斷若為初次使用的使用者, 須將其資料儲存
             if(uiSetting == UISetting.Initial){
-                nameOfTheTrainer = name_editText.getText().toString();
+//                nameOfTheTrainer = name_editText.getText().toString();
                 SharedPreferences.Editor editor = preferences.edit();
                 //紀錄訓練家姓名
                 editor.putString(nameEditTextKey,nameOfTheTrainer);
@@ -200,7 +207,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
                 //Toast.makeText(this,"使用者資料已存入",Toast.LENGTH_LONG).show();
                 //點確認後,把介面用好看一點
                 //隱藏組
-                name_editText.setVisibility(View.INVISIBLE);
+//                name_editText.setVisibility(View.INVISIBLE);
                 optionGrp.setVisibility(View.INVISIBLE);
                 confirm_button.setVisibility(View.INVISIBLE);
                 //顯示組
@@ -226,6 +233,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
             } , changeActivityInSecs * 1000);
         }
     }
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -271,6 +279,81 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
         ((RadioButton)optionGrp.getChildAt(selectedOptionIndex)).setChecked(true);
     }
 
+//////////////////////////////////////////////////////////////////////////////////////////
+    //設定 FB Login的邏輯
+    public void setupFBLogin(){
+        callbackManager = CallbackManager.Factory.create();
+        //詢問權限
+        loginButton.setReadPermissions("public_profile","email");
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                accessToken = loginResult.getAccessToken();
+                sendGraphRequest(); //寄送這些權限需求 !?
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
+
+
+
+
+    }
+
+    /* Graph API為 Facebook 社交關係圖存取和輸出資料的方式
+    * 透過GraphRequest 和 GraphResponse 類別能夠以非同步處理的方式, 使用JSON格式做出要求與取得回應
+    * GraphRequest 類別的newMeRequest 會呼叫 "/user/me" 端點, 擷取指定存取權杖的用戶資料
+    * 1.先測試是否 有收到 accessToken 並送出要求, 因為還沒設定回傳值, 所以用 log.d 進行測試
+    */
+    public void sendGraphRequest(){
+        //先判斷是否拿到accessToken
+        if( accessToken != null ){
+            GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+                @Override
+                public void onCompleted(JSONObject object, GraphResponse response) {
+                    if(response != null ){
+                        Log.d("FB",object.toString());
+                        Log.d("FB",object.optString("name"));
+                        Log.d("FB",object.optString("email"));
+                        Log.d("FB",object.optString("id"));
+
+                        if (object.has("picture")){
+                         try {
+                             String profilePicUrl = object.getJSONObject("picture")
+                                     .getJSONObject("data")
+                                     .getString("url");
+                             Log.d("FB",profilePicUrl);
+                         }catch (Exception e){
+
+                         }
+                        }
+                    }
+                }
+            });
+
+            Bundle parameters = new Bundle();
+            parameters.putString("fields","id,email,name,picture.type(large)");  //加入fields 參數並要求特定欄位
+            request.setParameters(parameters);
+            request.executeAsync(); //設定非同步執行
+        }
+    }
+
+    //接 從 FB APP 回傳的結果
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
     //測試不同Activity的功能, 以Log.d測試
     @Override
