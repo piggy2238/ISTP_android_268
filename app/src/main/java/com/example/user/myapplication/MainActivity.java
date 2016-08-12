@@ -22,7 +22,14 @@ import com.example.user.myapplication.model.OwningPokemonDataManager;
 import com.example.user.myapplication.model.PokemonInfo;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -34,7 +41,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
 //  設定使用變數:類別 名稱與內容
     TextView infoText;
     RadioGroup optionGrp;
-    EditText name_editText;
+//    EditText name_editText;
     int selectedOptionIndex = 0;
     String[] pokemonNames = new String[]{
         "小火龍","傑尼龜","妙蛙種子"
@@ -76,8 +83,8 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
         optionGrp.setOnCheckedChangeListener(this);
 
         infoText = (TextView) findViewById(R.id.infoText);
-        name_editText = (EditText) findViewById(R.id.name_editText);
-        name_editText.setOnEditorActionListener(this);
+//        name_editText = (EditText) findViewById(R.id.name_editText);
+//        name_editText.setOnEditorActionListener(this);
 
         //Setting ProgressBar
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
@@ -114,7 +121,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
         }
 
         loginButton = (LoginButton)findViewById(R.id.login_button);
-
+        setupFBLogin();
 
 
 
@@ -139,7 +146,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
     private void changeUIAccordingToRecord(){
         if(uiSetting == UISetting.DataIsKnown){
          //隱藏組
-           name_editText.setVisibility(View.INVISIBLE);
+//           name_editText.setVisibility(View.INVISIBLE);
            optionGrp.setVisibility(View.INVISIBLE);
            confirm_button.setVisibility(View.INVISIBLE);
          //顯示組
@@ -148,7 +155,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
             confirm_button.performClick();
         }else{
          //隱藏的顯示,顯示的隱藏
-            name_editText.setVisibility(View.VISIBLE);
+//            name_editText.setVisibility(View.VISIBLE);
             optionGrp.setVisibility(View.VISIBLE);
             confirm_button.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.INVISIBLE);
@@ -169,7 +176,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
 
         }else{
             infoText.setText(String.format("你好, 訓練家%s 歡迎來到神奇寶貝的世界,你的夥伴是%s,冒險即將於%d秒鐘之後開始",
-                    name_editText.getText().toString(),
+//                    name_editText.getText().toString(),
                     pokemonNames[selectedOptionIndex],
                     changeActivityInSecs
             ));
@@ -189,7 +196,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
             v.setClickable(false);
             //0.判斷若為初次使用的使用者, 須將其資料儲存
             if(uiSetting == UISetting.Initial){
-                nameOfTheTrainer = name_editText.getText().toString();
+//                nameOfTheTrainer = name_editText.getText().toString();
                 SharedPreferences.Editor editor = preferences.edit();
                 //紀錄訓練家姓名
                 editor.putString(nameEditTextKey,nameOfTheTrainer);
@@ -200,7 +207,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
                 //Toast.makeText(this,"使用者資料已存入",Toast.LENGTH_LONG).show();
                 //點確認後,把介面用好看一點
                 //隱藏組
-                name_editText.setVisibility(View.INVISIBLE);
+//                name_editText.setVisibility(View.INVISIBLE);
                 optionGrp.setVisibility(View.INVISIBLE);
                 confirm_button.setVisibility(View.INVISIBLE);
                 //顯示組
@@ -271,6 +278,70 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
         ((RadioButton)optionGrp.getChildAt(selectedOptionIndex)).setChecked(true);
     }
 
+    public void setupFBLogin() {
+        callbackManager = CallbackManager.Factory.create();
+        //詢問這些項目的權限
+        loginButton.setReadPermissions("public_profile", "email");
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                accessToken = loginResult.getAccessToken();
+                sendGraphRequest();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
+
+
+    }
+
+    public void sendGraphRequest() {
+        if(accessToken != null) {
+            GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+                @Override
+                public void onCompleted(JSONObject object, GraphResponse response) {
+                    if(response != null) {
+                        Log.d("FB", object.toString());
+                        Log.d("FB", object.optString("name"));
+                        Log.d("FB", object.optString("email"));
+                        Log.d("FB", object.optString("id"));
+                        if(object.has("picture")) {
+                            try {
+                                String profilePicUrl = object.getJSONObject("picture")
+                                        .getJSONObject("data")
+                                        .getString("url");
+                                Log.d("FB",profilePicUrl);
+                            }
+                            catch(Exception e) {
+                            }
+                        }
+                    }
+                }
+            });
+
+            Bundle parameters = new Bundle();
+            parameters.putString("fields","id,email,name,picture.type(large)");
+            request.setParameters(parameters);
+            request.executeAsync();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
     //測試不同Activity的功能, 以Log.d測試
     @Override
