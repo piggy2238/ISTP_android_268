@@ -20,6 +20,9 @@ import android.widget.Toast;
 
 import com.example.user.myapplication.model.OwningPokemonDataManager;
 import com.example.user.myapplication.model.PokemonInfo;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.login.widget.LoginButton;
 
 import java.util.ArrayList;
 
@@ -49,6 +52,14 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
     //Setting UI 狀態
     public enum UISetting{Initial, DataIsKnown}
     UISetting uiSetting;
+
+    //新增 FB 需要使用的 Key
+    public final static String profileImgUrlKey = "profileImgUrlKey";
+    public final static String emailKey = "emailKey";
+
+    LoginButton loginButton;
+    CallbackManager callbackManager;
+    AccessToken accessToken;
 
 //  程式初始化
     @Override
@@ -84,6 +95,34 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
         //4.判定是否為第一次使用者 (根據訓練家姓名是否為null為依據)
         //5.UI 狀態設定好以後再呼叫新的function 決定螢幕顯示狀況
         preferences = getSharedPreferences(Application.class.getName(),MODE_PRIVATE);
+
+        //是否取得 FB 授權
+        AccessToken currentToken;
+        currentToken = AccessToken.getCurrentAccessToken();
+        if (currentToken != null){
+            accessToken = currentToken;
+        }else{
+            //針對 preference 進行修改
+            SharedPreferences.Editor editor = preferences.edit();
+            //移除掉舊紀錄 確保登出後紀錄也一並清除
+            editor.remove(nameEditTextKey);
+            editor.remove(profileImgUrlKey);
+            editor.remove(emailKey);
+            editor.commit();
+
+            accessToken = null;
+        }
+
+        loginButton = (LoginButton)findViewById(R.id.login_button);
+
+
+
+
+
+
+
+
+
         selectedOptionIndex = preferences.getInt(optionSelectedKey,selectedOptionIndex);
         nameOfTheTrainer = preferences.getString(nameEditTextKey,nameOfTheTrainer);
         if(nameOfTheTrainer == null){
