@@ -1,6 +1,7 @@
 package com.example.user.myapplication;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.PersistableBundle;
@@ -9,6 +10,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -16,7 +19,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.os.Handler;
-import android.widget.Toast;
 
 import com.example.user.myapplication.model.OwningPokemonDataManager;
 import com.example.user.myapplication.model.PokemonInfo;
@@ -35,46 +37,39 @@ import java.util.ArrayList;
 
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
-
 public class MainActivity extends CustomizedActivity implements View.OnClickListener,RadioGroup.OnCheckedChangeListener,TextView.OnEditorActionListener {
 
-//  設定使用變數:類別 名稱與內容
     TextView infoText;
     RadioGroup optionGrp;
-//    EditText name_editText; 改用 FB 帳號登入
     int selectedOptionIndex = 0;
-    String[] pokemonNames = new String[]{
-        "小火龍","傑尼龜","妙蛙種子"
-    };
     Button confirm_button;
-    int changeActivityInSecs = 3; //延遲進入的秒數
+    String[] pokemonNames = new String[]{
+            "小火龍","傑尼龜","妙蛙種子"
+    };
     ProgressBar progressBar;
-
-    //利用SharePreference 進行偏好設定, 以下為所需變數
     SharedPreferences preferences;
+
     String nameOfTheTrainer = null;
-    public final static String optionSelectedKey = "selection";
     public final static String nameEditTextKey = "nameOfTheTrainer";
-
-    //Setting UI 狀態
-    public enum UISetting{Initial, DataIsKnown}
-    UISetting uiSetting;
-
-    //新增FB AccessToken 所需要的 key 以及 宣告變數
     public final static String profileImgUrlKey = "profileImgUrlKey";
     public final static String emailKey = "emailKey";
-    LoginButton loginButton;
-    CallbackManager callbackManager; //FB 的登入是透過 FB APP 要資料後回傳, 所以要用 callbackManager 去接值
-    AccessToken accessToken; //用來要求某些資料的權限
 
-//  程式初始化
+    public enum UISetting {
+        Initial,
+        DataIsKnown
+    }
+
+    UISetting uiSetting;
+
+    LoginButton loginButton;
+    CallbackManager callbackManager;
+    AccessToken accessToken;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_myapplication);//選擇要使用的Layout
+        setContentView(R.layout.activity_myapplication);
 
-        //透過id設定各Activity中的物件與xml的物件結合
-        //如有需要根據各項目需求要設定其listener
         confirm_button = (Button)findViewById(R.id.confirm_button);
         confirm_button.setOnClickListener(this);
 
@@ -82,35 +77,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
         optionGrp.setOnCheckedChangeListener(this);
 
         infoText = (TextView) findViewById(R.id.infoText);
-        /*已改用 FB 帳號登入*/
-//        name_editText = (EditText) findViewById(R.id.name_editText);
-//        name_editText.setOnEditorActionListener(this);
 
-        /* 使用FB帳號登入
-         * 1.判斷accessToken 是否存在
-         * 2.如果不存在須清除掉Key 避免拿到舊資料
-          * */
-        AccessToken currentToken;
-        currentToken = AccessToken.getCurrentAccessToken();
-        if( currentToken != null ){
-            accessToken = currentToken;
-        }else{
-            //針對preference 進行修改
-            SharedPreferences.Editor editor = preferences.edit();
-            //舊資料移除
-            editor.remove(nameEditTextKey);
-            editor.remove(profileImgUrlKey);
-            editor.remove(emailKey);
-            editor.commit();
-            //確保 accessToken是空的
-            accessToken = null;
-        }
-
-        /*註冊 loginButton */
-        loginButton = (LoginButton)findViewById(R.id.login_button);
-        setupFBLogin(); //設定按下 FBLOGIN 按鈕後要執行 動作
-
-        //Setting ProgressBar
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
         progressBar.setIndeterminateDrawable(new CircularProgressDrawable
                 .Builder(this)
@@ -119,129 +86,196 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
                 .strokeWidth(8f)
                 .build());
 
-        /*判定是否為第一次的使用者
-        *1.抓入偏好設定資料
-        *2.抓偏好設定資料中_訓練家姓名
-        *3.抓偏好設定資料中_第一隻神奇寶貝名字
-        *4.判定是否為第一次使用者 (根據訓練家姓名是否為null為依據)
-        *5.UI 狀態設定好以後再呼叫新的function 決定螢幕顯示狀況
-        */
-        preferences = getSharedPreferences(Application.class.getName(),MODE_PRIVATE);
-        selectedOptionIndex = preferences.getInt(optionSelectedKey,selectedOptionIndex);
-        nameOfTheTrainer = preferences.getString(nameEditTextKey,nameOfTheTrainer);
-        if(nameOfTheTrainer == null){
+        preferences = getSharedPreferences(Application.class.getName(), MODE_PRIVATE);
+        AccessToken currentToken;
+        currentToken = AccessToken.getCurrentAccessToken();
+        if(currentToken != null) {
+            accessToken = currentToken;
+        }
+        else {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.remove(nameEditTextKey);
+            editor.remove(profileImgUrlKey);
+            editor.remove(emailKey);
+            editor.commit();
+
+            accessToken = null;
+        }
+
+        loginButton = (LoginButton)findViewById(R.id.login_button);
+        setupFBLogin();
+
+        selectedOptionIndex = preferences.getInt(optionSelectedKey, selectedOptionIndex);
+        nameOfTheTrainer = preferences.getString(nameEditTextKey, nameOfTheTrainer);
+
+        if(nameOfTheTrainer == null) {
             uiSetting = UISetting.Initial;
-        }else{
+        }
+        else {
             uiSetting = UISetting.DataIsKnown;
         }
+
         changeUIAccordingToRecord();
+    }
 
+    public void setupFBLogin() {
+        callbackManager = CallbackManager.Factory.create();
 
+        loginButton.setReadPermissions("public_profile", "email");
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                accessToken = loginResult.getAccessToken();
+                sendGraphRequest();
+            }
 
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
 
     }
 
- //////////////////////////////////////////////////////////////////////////////////////////////
-// 根據不同的登入情況 選擇UI要顯示及隱藏的項目
-    private void changeUIAccordingToRecord(){
-        if(uiSetting == UISetting.DataIsKnown){
-         //隱藏組
-//           name_editText.setVisibility(View.INVISIBLE);
-           optionGrp.setVisibility(View.INVISIBLE);
-           confirm_button.setVisibility(View.INVISIBLE);
-         //顯示組
+    public void sendGraphRequest() {
+        if(accessToken != null) {
+            GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+                @Override
+                public void onCompleted(JSONObject object, GraphResponse response) {
+                    if(response != null) {
+                        Log.d("FB", object.toString());
+                        Log.d("FB", object.optString("name"));
+                        Log.d("FB", object.optString("email"));
+                        Log.d("FB", object.optString("id"));
+                        if(object.has("picture")) {
+                            try {
+                                String profilePicUrl = object.getJSONObject("picture")
+                                        .getJSONObject("data")
+                                        .getString("url");
+                                Log.d("FB",profilePicUrl);
+                            }
+                            catch(Exception e) {
+                            }
+                        }
+                    }
+                }
+            });
+
+            Bundle parameters = new Bundle();
+            parameters.putString("fields","id,email,name,picture.type(large)");
+            request.setParameters(parameters);
+            request.executeAsync();
+        }
+    }
+
+
+    private void changeUIAccordingToRecord() {
+        if(uiSetting == UISetting.DataIsKnown) {
+            confirm_button.setVisibility(View.INVISIBLE);
+            optionGrp.setVisibility(View.INVISIBLE);
+
             progressBar.setVisibility(View.VISIBLE);
-            //although button is invisible, we can still simulate the button clicked.
+
             confirm_button.performClick();
-        }else{
-         //隱藏的顯示,顯示的隱藏
-//            name_editText.setVisibility(View.VISIBLE);
-            optionGrp.setVisibility(View.VISIBLE);
+        }
+        else {
             confirm_button.setVisibility(View.VISIBLE);
+            optionGrp.setVisibility(View.VISIBLE);
+
             progressBar.setVisibility(View.INVISIBLE);
         }
-        //測試是否成功進入App
-        //Toast.makeText(this,"這是首頁",Toast.LENGTH_LONG).show();
     }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-// 根據不同的登入狀況 選擇要顯示的文字
-    private void setInfoTextWithFormat(){
-        //針對原使用者
-        if(uiSetting == UISetting.DataIsKnown){
-            infoText.setText(String.format("你好, 訓練家%s 歡迎回到神奇寶貝的世界,你的夥伴是%s,冒險即將於%d秒鐘之後繼續",
+    public final static String optionSelectedKey = "selectedOption";
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(optionSelectedKey, selectedOptionIndex);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        selectedOptionIndex = savedInstanceState.getInt(optionSelectedKey, 0);
+        ((RadioButton)optionGrp.getChildAt(selectedOptionIndex)).setChecked(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("testStage", "onResume");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("testStage", "onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("testStage", "onStop");
+        confirm_button.setClickable(true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("testStage", "onDestroy");
+    }
+
+    int changeActivityInSecs = 5;
+
+    private void setInfoTextWithFormat() {
+
+        if(uiSetting == UISetting.Initial) {
+            infoText.setText(String.format("你好, 訓練家%s 歡迎來到神奇寶貝的世界, 你的夥伴是%s, 冒險將於%d秒後開始",
                     nameOfTheTrainer,
                     pokemonNames[selectedOptionIndex],
                     changeActivityInSecs));
-
-        }else{
-            infoText.setText(String.format("你好, 訓練家%s 歡迎來到神奇寶貝的世界,你的夥伴是%s,冒險即將於%d秒鐘之後開始",
-//                    name_editText.getText().toString(),
+        }
+        else if(uiSetting == UISetting.DataIsKnown){
+            infoText.setText(String.format("你好, 訓練家%s 歡迎回到神奇寶貝的世界, 你的夥伴是%s, 冒險將於%d秒後繼續",
+                    nameOfTheTrainer,
                     pokemonNames[selectedOptionIndex],
-                    changeActivityInSecs
-            ));
-
+                    changeActivityInSecs));
         }
     }
-///////////////////////////////////////////////////////////////////////////////////////////////
-    //按下確認後
-    //1. 顯示歡迎介面
-    //2. 跳轉至下一頁面
-    //  發生click事件要做的事情
+
     @Override
     public void onClick(View v) {
         int viewId = v.getId();
         if(viewId == R.id.confirm_button) {
-            //-1.點了button 以後不要再讓人家按
             v.setClickable(false);
-            //0.判斷若為初次使用的使用者, 須將其資料儲存
-            if(uiSetting == UISetting.Initial){
-//                nameOfTheTrainer = name_editText.getText().toString();
+            if(uiSetting == UISetting.Initial) {
                 SharedPreferences.Editor editor = preferences.edit();
-                //紀錄訓練家姓名
-                editor.putString(nameEditTextKey,nameOfTheTrainer);
-                //紀錄選擇的神奇寶貝
-                editor.putInt(optionSelectedKey,selectedOptionIndex);
-                //紀錄為版本,成功存入
+                editor.putString(nameEditTextKey, nameOfTheTrainer);
+                editor.putInt(optionSelectedKey, selectedOptionIndex);
                 editor.commit();
-                //Toast.makeText(this,"使用者資料已存入",Toast.LENGTH_LONG).show();
-                //點確認後,把介面用好看一點
-                //隱藏組
-//                name_editText.setVisibility(View.INVISIBLE);
-                optionGrp.setVisibility(View.INVISIBLE);
-                confirm_button.setVisibility(View.INVISIBLE);
-                //顯示組
-                progressBar.setVisibility(View.VISIBLE);
-
             }
 
-
-            //1. 顯示歡迎介面
             setInfoTextWithFormat();
 
-            //2. 跳轉至下一頁面 //切換到另一個Activity
-            //新增一個跳轉的物件
             Handler handler = new Handler(MainActivity.this.getMainLooper());
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Intent intent = new Intent(MainActivity.this,PokemonListActivity.class);
-                    intent.putExtra(optionSelectedKey,selectedOptionIndex);
+                    Intent intent = new Intent(MainActivity.this, PokemonListActivity.class);
+                    intent.putExtra(optionSelectedKey, selectedOptionIndex);
                     startActivity(intent);
-                    MainActivity.this.finish();
+                    finish();
                 }
-            } , changeActivityInSecs * 1000);
+            }, changeActivityInSecs * 1000);
+
         }
     }
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////
-    //選擇夥伴的步驟
-    //1.感受到checked/change
-    //2.儲存選擇的項目
-    //3.回傳選擇的項目,並設定預設值
-
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -261,128 +295,23 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
         }
     }
 
-    //UI狀態儲存
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-       //Bundle 的類別 用put放東西 是以key value的形式儲存資料
-        super.onSaveInstanceState(outState);
-        outState.putInt(optionSelectedKey, selectedOptionIndex);
-        //記下使用者所選擇的index
-    }
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if(actionId == EditorInfo.IME_ACTION_DONE) {
+            InputMethodManager inm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            inm.hideSoftInputFromWindow(v.getWindowToken(),0);
 
-    //回復使用者所選擇的index
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-                                                                       //預設值為0
-        selectedOptionIndex = savedInstanceState.getInt(optionSelectedKey,0);
-        ((RadioButton)optionGrp.getChildAt(selectedOptionIndex)).setChecked(true);
-    }
-
-//////////////////////////////////////////////////////////////////////////////////////////
-    //設定 FB Login的邏輯
-    public void setupFBLogin(){
-        callbackManager = CallbackManager.Factory.create();
-        //詢問權限
-        loginButton.setReadPermissions("public_profile","email");
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                accessToken = loginResult.getAccessToken();
-                sendGraphRequest(); //寄送這些權限需求 !?
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-
-            }
-        });
-
-
-
-
-    }
-
-    /* Graph API為 Facebook 社交關係圖存取和輸出資料的方式
-    * 透過GraphRequest 和 GraphResponse 類別能夠以非同步處理的方式, 使用JSON格式做出要求與取得回應
-    * GraphRequest 類別的newMeRequest 會呼叫 "/user/me" 端點, 擷取指定存取權杖的用戶資料
-    * 1.先測試是否 有收到 accessToken 並送出要求, 因為還沒設定回傳值, 所以用 log.d 進行測試
-    */
-    public void sendGraphRequest(){
-        //先判斷是否拿到accessToken
-        if( accessToken != null ){
-            GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
-                @Override
-                public void onCompleted(JSONObject object, GraphResponse response) {
-                    if(response != null ){
-                        Log.d("FB",object.toString());
-                        Log.d("FB",object.optString("name"));
-                        Log.d("FB",object.optString("email"));
-                        Log.d("FB",object.optString("id"));
-
-                        if (object.has("picture")){
-                         try {
-                             String profilePicUrl = object.getJSONObject("picture")
-                                     .getJSONObject("data")
-                                     .getString("url");
-                             Log.d("FB",profilePicUrl);
-                         }catch (Exception e){
-
-                         }
-                        }
-                    }
-                }
-            });
-
-            Bundle parameters = new Bundle();
-            parameters.putString("fields","id,email,name,picture.type(large)");  //加入fields 參數並要求特定欄位
-            request.setParameters(parameters);
-            request.executeAsync(); //設定非同步執行
+            confirm_button.performClick();
+            return true;
         }
+
+        return false;
+
     }
 
-    //接 從 FB APP 回傳的結果
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-    //測試不同Activity的功能, 以Log.d測試
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("testStage", "onResume");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d("testStage", "onPause");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d("testStage", "onStop");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d("testStage", "onDestroy");
-    }
-
-
-    @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        return false;
     }
 }
