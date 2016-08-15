@@ -192,7 +192,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
 //                nameOfTheTrainer = name_editText.getText().toString();
                 SharedPreferences.Editor editor = preferences.edit();
                 //紀錄訓練家姓名
-                editor.putString(nameEditTextKey,nameOfTheTrainer);
+                //editor.putString(nameEditTextKey,nameOfTheTrainer);
                 //紀錄選擇的神奇寶貝
                 editor.putInt(optionSelectedKey,selectedOptionIndex);
                 //紀錄為版本,成功存入
@@ -234,8 +234,6 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
     //1.感受到checked/change
     //2.儲存選擇的項目
     //3.回傳選擇的項目,並設定預設值
-
-
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         int radioGrpID = group.getId();
@@ -272,6 +270,8 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
         ((RadioButton)optionGrp.getChildAt(selectedOptionIndex)).setChecked(true);
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    //與臉書的功能結合, 確認登入後就會回傳這些資料
     public void setupFBLogin() {
         callbackManager = CallbackManager.Factory.create();
         //詢問這些項目的權限
@@ -337,6 +337,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
