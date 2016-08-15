@@ -52,7 +52,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
 
     //利用SharePreference 進行偏好設定, 以下為所需變數
     SharedPreferences preferences;
-    String nameOfTheTrainer;
+    String nameOfTheTrainer = null;
     public final static String optionSelectedKey = "selection";
     public final static String nameEditTextKey = "nameOfTheTrainer";
 
@@ -123,13 +123,6 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
         loginButton = (LoginButton)findViewById(R.id.login_button);
         setupFBLogin();
 
-
-
-
-
-
-
-
         selectedOptionIndex = preferences.getInt(optionSelectedKey,selectedOptionIndex);
         nameOfTheTrainer = preferences.getString(nameEditTextKey,nameOfTheTrainer);
         if(nameOfTheTrainer == null){
@@ -176,7 +169,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
 
         }else{
             infoText.setText(String.format("你好, 訓練家%s 歡迎來到神奇寶貝的世界,你的夥伴是%s,冒險即將於%d秒鐘之後開始",
-//                    name_editText.getText().toString(),
+                    nameOfTheTrainer,
                     pokemonNames[selectedOptionIndex],
                     changeActivityInSecs
             ));
@@ -229,7 +222,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
                     Intent intent = new Intent(MainActivity.this,DrawerActivity.class);
                     intent.putExtra(optionSelectedKey,selectedOptionIndex);
                     startActivity(intent);
-                    MainActivity.this.finish();
+                    finish();
                 }
             } , changeActivityInSecs * 1000);
         }
