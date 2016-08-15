@@ -1,8 +1,10 @@
 package com.example.user.myapplication;
 
+import android.app.Application;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -55,12 +57,24 @@ public class DrawerActivity extends AppCompatActivity implements FragmentManager
         //放入actionbar那行
         setSupportActionBar(toolbar);
 
-        //Set Profile
-        Drawable profileIcon = Utils.getDrawble(this,R.drawable.profile3);
-        profile =new ProfileDrawerItem()
-                .withName("hime")
-                .withEmail("b96601009@gmail.com")
-                .withIcon(profileIcon);
+        //Set Profile I- 直接設定在APP
+//        Drawable profileIcon = Utils.getDrawble(this,R.drawable.profile3);
+//        profile =new ProfileDrawerItem()
+//                .withName("hime")
+//                .withEmail("b96601009@gmail.com")
+//                .withIcon(profileIcon);
+
+        //Set Profile II- 利用從 MainActivity 傳來的 FB 資料建立 profile 並給予預設值
+        SharedPreferences preferences = getSharedPreferences(Application.class.getName(),MODE_PRIVATE);
+        String name = preferences.getString(MainActivity.nameEditTextKey,"Hime");
+        String email = preferences.getString(MainActivity.emailKey,"abc@ggmail.com.tw");
+        String url = preferences.getString(MainActivity.profileImgUrlKey,null);
+        if ( url == null){
+            Drawable profileIcon = Utils.getDrawble(this,R.drawable.profile3);
+            profile = new ProfileDrawerItem().withName(name).withEmail(email).withIcon(profileIcon);
+        }else{
+            profile = new ProfileDrawerItem().withName(name).withEmail(email).withIcon(url);
+        }
 
         //Build Drawer
         buildDrawerHeader(false, savedInstanceState);
