@@ -217,6 +217,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
 
 
             //1. 顯示歡迎介面
+            nameOfTheTrainer = preferences.getString(nameEditTextKey,nameOfTheTrainer);
             setInfoTextWithFormat();
 
             //2. 跳轉至下一頁面 //切換到另一個Activity
@@ -225,7 +226,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Intent intent = new Intent(MainActivity.this,PokemonListActivity.class);
+                    Intent intent = new Intent(MainActivity.this,DrawerActivity.class);
                     intent.putExtra(optionSelectedKey,selectedOptionIndex);
                     startActivity(intent);
                     MainActivity.this.finish();
@@ -309,20 +310,29 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
                 @Override
                 public void onCompleted(JSONObject object, GraphResponse response) {
                     if(response != null) {
-                        Log.d("FB", object.toString());
-                        Log.d("FB", object.optString("name"));
-                        Log.d("FB", object.optString("email"));
-                        Log.d("FB", object.optString("id"));
+                        //Test FB LOGIN 邏輯是否撰寫正確, 若正確應能取值
+//                        Log.d("FB", object.toString());
+//                        Log.d("FB", object.optString("name"));
+//                        Log.d("FB", object.optString("email"));
+//                        Log.d("FB", object.optString("id"));
+                        //將取到的值利用SharedPreferences 的 editor 儲存起來
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString(nameEditTextKey, object.optString("name"));
+                        editor.putString(emailKey,object.optString("email"));
+
                         if(object.has("picture")) {
                             try {
                                 String profilePicUrl = object.getJSONObject("picture")
                                         .getJSONObject("data")
                                         .getString("url");
-                                Log.d("FB",profilePicUrl);
+//                                Log.d("FB",profilePicUrl);
+                                editor.putString(profileImgUrlKey,profilePicUrl);
                             }
                             catch(Exception e) {
                             }
                         }
+                        // 存入 SharedPreference 的 commit  中
+                        editor.commit();
                     }
                 }
             });
