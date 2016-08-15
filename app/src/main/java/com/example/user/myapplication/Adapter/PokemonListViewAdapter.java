@@ -125,16 +125,16 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
             mRowView.setActivated(pokemonInfo.isSelected);
             //textView 透過 setview設計內容
             //成員變數.setText(pokemon.(Info內的變數名稱)) 須注意資料型態上的轉換
-            hp.setText(String.valueOf(pokemonInfo.currentHP));
-            max_hp.setText(String.valueOf(pokemonInfo.maxHP));
-            level.setText(String.valueOf(pokemonInfo.level));
-            name.setText(String.valueOf(pokemonInfo.name));
+            hp.setText(String.valueOf(pokemonInfo.getCurrentHP()));
+            max_hp.setText(String.valueOf(pokemonInfo.getMaxHP()));
+            level.setText(String.valueOf(pokemonInfo.getLevel()));
+            name.setText(String.valueOf(pokemonInfo.getName()));
 
             //progress 靠自己呈現內容
-            int progress = (int)((((float)(pokemonInfo.currentHP))/pokemonInfo.maxHP)*100);
+            int progress = (int)((((float)(pokemonInfo.getCurrentHP()))/pokemonInfo.getMaxHP())*100);
             hp_bar.setProgress(progress);
             //img 透過 picasso 設計內容
-            mPicasso.load(pokemonInfo.imgId).into(img);
+            mPicasso.load(pokemonInfo.getlistImgId()).into(img);
 
 
         }
@@ -164,7 +164,7 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
 
         for(int i = 0;i < getCount();i++) {
             PokemonInfo pokemonInfo = getItem(i);
-            if(name.equals(pokemonInfo.name)) {
+            if(name.equals(pokemonInfo.getName())) {
                 return pokemonInfo;
             }
         }
@@ -173,11 +173,11 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
     }
 
     public void update(PokemonInfo newData) {
-        PokemonInfo oldData = getItemWithName(newData.name);
-        oldData.skill = newData.skill;
-        oldData.currentHP = newData.currentHP;
-        oldData.maxHP = newData.maxHP;
-        oldData.level = newData.level;
+        PokemonInfo oldData = getItemWithName(newData.getName());
+        oldData.setSkill(newData.skill);
+        oldData.setCurrentHP(newData.getCurrentHP());
+        oldData.setMaxHP(newData.getMaxHP());
+        oldData.setLevel(newData.getLevel());
         notifyDataSetChanged();
     }
 
