@@ -29,11 +29,11 @@ dependencies {
     compile('com.mikepenz:materialdrawer:5.3.6@aar') {
         transitive = true
     }
-//icons and font
+    //icons and font
     compile 'com.mikepenz:google-material-typeface:2.2.0.1@aar'
     compile 'com.mikepenz:fontawesome-typeface:4.4.0.1@aar'
     compile 'com.mikepenz:octicons-typeface:3.0.0.1@aar'
-    
-//Add Facebook SDK
+    //Add Facebook SDK
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+    compile 'com.parse:parse-android:1.13.1'
 }

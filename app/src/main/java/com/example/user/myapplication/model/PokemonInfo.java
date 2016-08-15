@@ -3,15 +3,30 @@ package com.example.user.myapplication.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.parse.ParseClassName;
+import com.parse.ParseObject;
+
 /**
  * Created by lab430 on 16/7/16.
+ * 0815 新增 Key 以便符合 Parse App
+ * extends ParseObject 繼承的是 MyApplication
  */
-public class PokemonInfo implements Parcelable {
+@ParseClassName("PokemonInfo")
+public class PokemonInfo extends ParseObject implements Parcelable {
 
     //建立一個key
     public final static String parcelKey = "PokemonInfo.parcel";
-    public final static String nameKey = "PokemonInfo.Key";
-
+    public final static String nameKey = "PokemonInfo.name";
+    //新增 Parse 存取資料會用到的 Key = 雲端資料表的欄位名稱
+    public final static String listImgKey = "listImgId";
+    public final static String levelKey = "level";
+    public final static String currentHPKey = "currentHP";
+    public final static String maxHPKey = "maxHP";
+    public final static String type1Key = "type1";
+    public final static String type2Key = "type2";
+    public final static String skillKey = "skill";
+    public final static String detailImgIdKey = "detailImgId";
+    //自動把 public 的屬性封裝成getter(讀取) 和setter (設定)
     public final static int numCurrentSkills = 4;
     public static String[] typeNames ;
 
