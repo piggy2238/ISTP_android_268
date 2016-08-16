@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 /**
  * Created by lab430 on 16/7/24.
+ * 8/16 1.刪除部分comment 使程式較為整潔
+ *      2.將type檔案與pokemonInfo的檔案分不同的function loading 以便後續資料庫使用
  */
 public class OwningPokemonDataManager {
     Context mContext;
@@ -23,28 +25,17 @@ public class OwningPokemonDataManager {
         mContext = context;
         mRes = mContext.getResources();
         packageName = context.getPackageName();
-        loadTestingData();
-
-        pokemonNames = new ArrayList<>();
-        for(PokemonInfo pokemonInfo : pokemonInfos) {
-            pokemonNames.add(pokemonInfo.getName());
-        }
+//        loadListViewData(); // 因為要判斷是否使用DB資料, 因此loadListViewData的funciton將不再此執行
     }
 
-    private void loadTestingData() {
+    private void loadListViewData() {
         pokemonInfos = new ArrayList<>();
         BufferedReader reader;
         String line = null;
         String[] dataFields = null;
         try {
-            //引用神奇寶貝類型資料
-            //引用原始資料
-            reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open("pokemon_types.csv")));
-            //用,把各項目資料分開
-            PokemonInfo.typeNames = reader.readLine().split(",");
-            reader.close();
 
-            //飲用使用這選擇的神奇寶貝夥伴
+            //引用使用這選擇的神奇寶貝夥伴
             reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open("init_pokemon_data.csv")));
             for (int i = 0; i<3 ; i++){
                 dataFields = reader.readLine().split(",");
@@ -97,5 +88,19 @@ public class OwningPokemonDataManager {
 
     public PokemonInfo[] getInitThreePokemonInfos(){
         return initThreePokemonInfos;
+    }
+
+    public void loadPokeomonTypes(){
+        BufferedReader reader;
+
+        try{
+            reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open("pokemon_types.csv")));
+            //用,把各項目資料分開
+            PokemonInfo.typeNames = reader.readLine().split(",");
+            reader.close();
+        }
+        catch(Exception e){
+            Log.d("text.csv",e.getLocalizedMessage());
+        }
     }
 }
