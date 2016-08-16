@@ -3,6 +3,11 @@
     package="com.example.user.myapplication">
     <!--用name放進去確保在編譯時有用到MyApplication-->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!--Setup Permission-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+
     <application
         android:name="MyApplication"
         android:allowBackup="true"
