@@ -3,8 +3,11 @@ package com.example.user.myapplication.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.parse.FindCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +36,10 @@ public class PokemonInfo extends ParseObject implements Parcelable {
     //右鍵 > refactor > Encapsulate fields
     public final static int numCurrentSkills = 4;
     public static String[] typeNames ;
+    //辨別要存取的 local database 的資料表
+    public static final String localDBTableName = PokemonInfo.class.getName();
+
+
 
     //因為要傳遞值 使用plugin 進行批次傳遞 存於parcle 作為初始化數值 再傳遞到下個Activity
     //但因為detail 還沒做, 所以這邊先不進行
@@ -171,4 +178,47 @@ public class PokemonInfo extends ParseObject implements Parcelable {
         put(skillKey,skillList);
         this.skill = skill;
     }
+
+    /**從Parse 拿Query的Objects*/
+    public static ParseQuery<PokemonInfo> getQuery(){
+        return ParseQuery.getQuery(PokemonInfo.class);
+    }
+
+    /**初始化資料表
+     * 1. 先取得lacal端新資料
+     * 2. 刪除全部舊資料
+     * 3. 重新放入新資料,再同步?!
+     *
+     * 2.5建立與資料庫同步的function (syncToDB) 以便在步驟3使用
+     * */
+    public static void initTable(final ArrayList<PokemonInfo> pokemonInfos){
+        //2-0. 找尋雲端及local端的舊資料
+        PokemonInfo.getQuery().fromPin(localDBTableName).findInBackground(new FindCallback<PokemonInfo>() {
+            @Override
+            public void done(List<PokemonInfo> objects, ParseException e) {
+                if(e == null){
+                    //2-1. 刪除雲端資料
+                    for(PokemonInfo object :objects){
+                        object.deleteEventually();
+                    }
+                    //2-2. 刪除local端資料
+                    PokemonInfo.unpinAllInBackground(objects);
+
+                    //3.重新放入資料後與資料庫同步
+                    syncToDB(pokemonInfos);
+                }
+            }
+        });
+    }
+
+    public static void syncToDB(List<PokemonInfo> pokemonInfos){
+        //Save to local
+        PokemonInfo.pinAllInBackground(localDBTableName, pokemonInfos);
+        //Save to remote
+        for( PokemonInfo pokemonInfo: pokemonInfos){
+            pokemonInfo.saveEventually();
+        }
+    }
+
+
 }
