@@ -28,7 +28,7 @@ public class OwningPokemonDataManager {
 //        loadListViewData(); // 因為要判斷是否使用DB資料, 因此loadListViewData的funciton將不再此執行
     }
 
-    private void loadListViewData() {
+    public void loadListViewData() {
         pokemonInfos = new ArrayList<>();
         BufferedReader reader;
         String line = null;

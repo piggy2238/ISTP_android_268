@@ -2,9 +2,11 @@ package com.example.user.myapplication.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -49,6 +51,9 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
         return fragment;
 
     }
+
+    //判斷資料是否存在於資料庫, 預設值為false
+    public static final String recordInDBKey = "recordInDBKey";
 /*
 * 生成物件及讀取資料
 * */
@@ -56,13 +61,8 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        prepareListViewData();
 
-        OwningPokemonDataManager dataManager = new OwningPokemonDataManager(activity);
-        int selectedOptionIndex = activity.getIntent().getIntExtra(MainActivity.optionSelectedKey,0);
-        pokemonInfos = dataManager.getPokemonInfos();
-
-        PokemonInfo[] initThreePokemons = dataManager.getInitThreePokemonInfos();
-        pokemonInfos.add(0,initThreePokemons[selectedOptionIndex]);
     }
 
 /*
@@ -98,6 +98,61 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
 
         return fragmentView;
     }
+
+    //////////////////////////////////////////////////////////////////////////
+    //讀取 ListView 資料
+    /*設計重點:從 SharePreference 讀取資料 並判斷是否存在於資料庫
+    * 初次使用:載入 local 資料 並於資料表同步
+    * 舊的使用者:利用getQuery 從 兩邊 DB 拿取資料
+    **/
+    public void prepareListViewData(){
+
+        pokemonInfos = new ArrayList<>();
+
+        SharedPreferences preferences = activity.getSharedPreferences(Application.class.getName(), Activity.MODE_PRIVATE);
+        boolean recordInDB = preferences.getBoolean(recordInDBKey, false);
+
+        OwningPokemonDataManager dataManager = new OwningPokemonDataManager(activity); //CSV 資料、讀取資料所需的函式先存於物件中
+
+        if(!recordInDB){
+            //初次使用 save to DB
+            dataManager.loadListViewData(); //載入CSV資料-訓練師所選擇的神奇寶貝與基本的神奇寶貝資料群
+
+            /**目的:放入系統一開始給予訓練師的基本 神奇寶貝群
+             *1. 從 dataManager 把資料取回 暫存於 ArrayList<PokeomnInfo> 中
+             *2. 利用迴圈方式將取回的資料正式的寫入 pokemoInfos
+             */
+            ArrayList<PokemonInfo> temInfos = dataManager.getPokemonInfos();
+            for (PokemonInfo pokemonInfo : temInfos){
+                pokemonInfos.add(pokemonInfo);
+            }
+
+            /**目的:放入訓練師一開始選的神奇寶貝夥伴 (小火龍,傑尼龜,妙蛙種子)的資訊
+             * 方法:
+             * 1. 從 dataManager 把三隻的完整資訊都取回 存於 PokemonInfo[]
+             * 2. 利用 getIntent 得到使用者選擇的編號(selectedPokemonIndex)
+             * 3. 加入pokemonInfos 中
+             * */
+            PokemonInfo[] initThreePokemons = dataManager.getInitThreePokemonInfos();
+            int selectedPokemonIndex = activity.getIntent().getIntExtra(MainActivity.optionSelectedKey,0);
+            pokemonInfos.add(0,initThreePokemons[selectedPokemonIndex]);
+
+            //執行資料表初始化,將資料放入 DB 中, 目前狀況:recordInDB --> true, commit起來
+            PokemonInfo.initTable(pokemonInfos);
+            preferences.edit().putBoolean(recordInDBKey,true).commit();
+
+        }else{
+            //舊的使用者 Load from DB
+
+
+
+
+
+        }
+
+
+    }
+
 
 
     //////////////////////////////////////////////////////////////////////////
