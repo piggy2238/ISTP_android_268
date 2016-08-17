@@ -127,9 +127,11 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         PokemonInfo pokemonInfo = adapter.getItem(position);
+        //Test 是否抓的到 點擊的pokeomnInfo
+        //Toast.makeText(activity, pokemonInfo.getName() + "已存入電腦中", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(activity, PokemonDetailActivity.class);
         intent.putExtra(PokemonInfo.parcelKey, pokemonInfo);
-        startActivityForResult(intent, detailActivityRequestCode);
+        startActivityForResult(intent, detailActivityRequestCode);//這行出問題
     }
 
     @Override
