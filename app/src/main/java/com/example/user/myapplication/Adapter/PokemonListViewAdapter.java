@@ -102,7 +102,7 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
         private PokemonListViewAdapter mAdapter;
 
 
-        //Constructoer 建構子
+        //Constructor 建構子
         public ViewHolder(View row_view, Picasso picasso,PokemonListViewAdapter adapter) {
             //找出相對應UI
             img =   (ImageView)row_view.findViewById(R.id.img);
