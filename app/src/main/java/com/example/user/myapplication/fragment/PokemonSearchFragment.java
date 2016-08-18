@@ -3,12 +3,16 @@ package com.example.user.myapplication.fragment;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +27,7 @@ import java.util.ArrayList;
 /**
  * Created by User on 2016/8/18.
  */
-public class PokemonSearchFragment extends Fragment /*implements DialogInterface.OnClickListener*/ {
+public class PokemonSearchFragment extends Fragment implements DialogInterface.OnClickListener {
 
     //變數
     AlertDialog searchDialog;
@@ -94,8 +98,13 @@ public class PokemonSearchFragment extends Fragment /*implements DialogInterface
         hideOrShowInfoText(searchResult);
 
         //Dialog View
+        //創建 SearchDialog
         if(searchDialog == null ){
-
+            View dialogView = inflater.inflate(R.layout.search_form, container, false);
+            searchDialog = new AlertDialog.Builder(getActivity()).setView(dialogView)
+                .setNegativeButton("取消", this)
+                .setPositiveButton("搜尋", this)
+                .create();
         }
 
         return fragmentView;
@@ -112,10 +121,60 @@ public class PokemonSearchFragment extends Fragment /*implements DialogInterface
         }
     }
 
-    //    @Override
-//    public void onClick(DialogInterface dialog, int which) {
-//
-//    }
+    //Dialog click 的實作 function
+        @Override
+    public void onClick(DialogInterface dialog, int which) {
+
+            if (which == AlertDialog.BUTTON_POSITIVE){
+                starSearching();
+            }else if ( which == AlertDialog.BUTTON_NEGATIVE ){
+
+            }
+
+    }
+
+    //Searching Function
+    public void starSearching(){
+
+    }
+
+    //Dialog ViewHolder
+    public static class DialogViewHolder {
+
+        //創立物件
+        View dialogView;
+
+        CheckBox[] conditionBoxs = new CheckBox[3];
+        CheckBox leftIntervalBox;
+        CheckBox rightIntervalBox;
+
+        EditText nameText;
+        EditText leftIntervalText;
+        EditText rightIntervalText;
+
+        Spinner[] typeSelectors = new Spinner[2];
+
+        //Create Constructor 對應 layoutId
+        DialogViewHolder(View dialogView){
+            this.dialogView = dialogView;   //把inflate 生成的view 物件放入
+
+            //建立 物件 與 layout id 的連結
+            conditionBoxs[0] = (CheckBox)dialogView.findViewById(R.id.conditionbox1);
+            conditionBoxs[1] = (CheckBox)dialogView.findViewById(R.id.conditionbox2);
+            conditionBoxs[2] = (CheckBox)dialogView.findViewById(R.id.conditionbox3);
+
+            leftIntervalBox = (CheckBox)dialogView.findViewById(R.id.leftIntervalConditionBox);
+            rightIntervalBox = (CheckBox)dialogView.findViewById(R.id.rightIntervalConditionBox);
+
+            nameText = (EditText)dialogView.findViewById(R.id.nameText);
+            leftIntervalText = (EditText)dialogView.findViewById(R.id.leftInterval);
+            rightIntervalText = (EditText)dialogView.findViewById(R.id.rightInterval);
+
+            typeSelectors[0] = (Spinner)dialogView.findViewById(R.id.type1Selector);
+            typeSelectors[1] = (Spinner)dialogView.findViewById(R.id.type2Selector);
+
+        }
+    }
 }
 
 
