@@ -34,7 +34,7 @@ public class SearchPokemonInfo extends ParseObject{
         return (ArrayList)get(typeKey);
     }
 
-    public String getPokedox(){
+    public String getPokedex(){
         return getString(resIdKey);
     }
 }
