@@ -102,7 +102,7 @@ public class PokemonSearchFragment extends Fragment implements DialogInterface.O
         //套用 layout 形成搜尋前的view
         if (fragmentView == null){
             fragmentView = inflater.inflate(R.layout.fragment_search,container,false);
-            listView = (ListView)fragmentView.findViewById(R.id.listView);
+            listView = (ListView)fragmentView.findViewById(R.id.listView2);
             infoText = (TextView)fragmentView.findViewById(R.id.infoText);
 
             //Set list view adapter
@@ -354,8 +354,3 @@ public class PokemonSearchFragment extends Fragment implements DialogInterface.O
         }
     }
 }
-
-
-
-
-

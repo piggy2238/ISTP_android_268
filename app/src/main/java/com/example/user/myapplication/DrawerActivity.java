@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.example.user.myapplication.fragment.PokemonListFragment;
+import com.example.user.myapplication.fragment.PokemonSearchFragment;
 import com.example.user.myapplication.fragment.TestFragment;
 import com.example.user.myapplication.model.Utils;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -87,7 +88,8 @@ public class DrawerActivity extends AppCompatActivity implements FragmentManager
 
         fragment = new Fragment[3];
         fragment[0] = PokemonListFragment.newInstance();
-        fragment[1] = TestFragment.newInstance("Fake 2");
+        fragment[1] = PokemonSearchFragment.newInstance();
+//        fragment[1] = TestFragment.newInstance("fake 1");
         fragment[2] = TestFragment.newInstance("Fake 3");
 
         /*遵循task(先進後出的資料結構),將資料倒序放入FragmentManager中*/
