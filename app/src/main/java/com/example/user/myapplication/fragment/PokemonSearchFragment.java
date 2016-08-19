@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -145,10 +146,11 @@ public class PokemonSearchFragment extends Fragment implements DialogInterface.O
         View dialogView;
 
         CheckBox[] conditionBoxs = new CheckBox[3];
-        CheckBox leftIntervalBox;
-        CheckBox rightIntervalBox;
 
         EditText nameText;
+
+        CheckBox leftIntervalBox;
+        CheckBox rightIntervalBox;
         EditText leftIntervalText;
         EditText rightIntervalText;
 
@@ -163,16 +165,75 @@ public class PokemonSearchFragment extends Fragment implements DialogInterface.O
             conditionBoxs[1] = (CheckBox)dialogView.findViewById(R.id.conditionbox2);
             conditionBoxs[2] = (CheckBox)dialogView.findViewById(R.id.conditionbox3);
 
+            nameText = (EditText)dialogView.findViewById(R.id.nameText);
+
             leftIntervalBox = (CheckBox)dialogView.findViewById(R.id.leftIntervalConditionBox);
             rightIntervalBox = (CheckBox)dialogView.findViewById(R.id.rightIntervalConditionBox);
-
-            nameText = (EditText)dialogView.findViewById(R.id.nameText);
             leftIntervalText = (EditText)dialogView.findViewById(R.id.leftInterval);
             rightIntervalText = (EditText)dialogView.findViewById(R.id.rightInterval);
 
             typeSelectors[0] = (Spinner)dialogView.findViewById(R.id.type1Selector);
             typeSelectors[1] = (Spinner)dialogView.findViewById(R.id.type2Selector);
 
+        }
+
+        //從layout 拿值
+
+        //1. 要設定多少選擇條件
+        public boolean conditionIsUsed(int index){
+            if( index < 3 ){
+                return conditionBoxs[index].isChecked();
+            }else{
+                return false;
+            }
+        }
+
+        //2. 名字欄位
+        public String getInputName(){
+            return nameText.getText().toString();
+        }
+
+        //3. 是否篩選左右邊界
+        public boolean containedByLeftInterval(){
+            return leftIntervalBox.isChecked();
+        }
+
+        public boolean containedByRightInterval(){
+            return rightIntervalBox.isChecked();
+        }
+
+        //4. 左右邊界的值
+        public float getLeftIntervalVal(){
+            return Float.valueOf(leftIntervalText.getText().toString());
+        }
+
+        public float getRightIntervalVal(){
+            return Float.valueOf(rightIntervalText.getText().toString());
+        }
+
+        //5. 選擇的屬性 index (-1為 none)
+        public int getSelectorType( int typeIndex ){
+            int selectPos = typeSelectors[typeIndex].getSelectedItemPosition();
+            if (selectPos ==0){
+              return -1;
+            }else{
+                return selectPos-1;
+            }
+        }
+
+        //6. 設定spinner 在index = 0 的地方加上 "none"屬性
+        public void setTypeList( int typeIndex, ArrayList<String> typeList ){
+
+            if( !typeList.contains("none") ){
+                typeList.add(0, "none");
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(dialogView.getContext(),
+                    android.R.layout.simple_spinner_item,
+                    typeList); // 官方提供的adapter
+
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+            typeSelectors[typeIndex].setAdapter(adapter); //屬性選擇欄位使用這個adapter呈現
         }
     }
 }
