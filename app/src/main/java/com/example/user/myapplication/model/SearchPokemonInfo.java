@@ -12,10 +12,10 @@ import java.util.ArrayList;
 @ParseClassName("Pokemon")
 public class SearchPokemonInfo extends ParseObject{
 
-    //一個資訊一個key
+    //一個資訊一個key 後方應為 資料表 名稱
     public final static String nameKey = "name";
     public final static String hpKey = "hp";
-    public final static String typeKey = "type";
+    public final static String typeKey = "types";
     public final static String resIdKey = "resId";
 
     public static ParseQuery<SearchPokemonInfo> getQuery(){
