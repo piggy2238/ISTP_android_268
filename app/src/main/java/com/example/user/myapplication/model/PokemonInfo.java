@@ -20,7 +20,7 @@ import java.util.List;
 public class PokemonInfo  extends ParseObject implements Parcelable {
 
     //建立一個key
-    public final static String parcelKey = "PokemonInfo.parcel";
+    public final static String parcelKey = "parcel";
     public final static String nameKey = "name";
 
     //1.新增 Parse 所需要的 Key

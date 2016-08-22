@@ -23,28 +23,15 @@ public class OwningPokemonDataManager {
         mContext = context;
         mRes = mContext.getResources();
         packageName = context.getPackageName();
-        loadTestingData();
-
-        pokemonNames = new ArrayList<>();
-        for(PokemonInfo pokemonInfo : pokemonInfos) {
-            pokemonNames.add(pokemonInfo.getName());
-        }
     }
 
-    private void loadTestingData() {
+    public void loadListViewData() {
         pokemonInfos = new ArrayList<>();
         BufferedReader reader;
         String line = null;
         String[] dataFields = null;
         try {
-            //引用神奇寶貝類型資料
-            //引用原始資料
-            reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open("pokemon_types.csv")));
-            //用,把各項目資料分開
-            PokemonInfo.typeNames = reader.readLine().split(",");
-            reader.close();
-
-            //飲用使用這選擇的神奇寶貝夥伴
+            //引用使用這選擇的神奇寶貝夥伴
             reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open("init_pokemon_data.csv")));
             for (int i = 0; i<3 ; i++){
                 dataFields = reader.readLine().split(",");
@@ -97,5 +84,21 @@ public class OwningPokemonDataManager {
 
     public PokemonInfo[] getInitThreePokemonInfos(){
         return initThreePokemonInfos;
+    }
+
+    //引用神奇寶貝類型資料
+    public void loadPokemonTypes(){
+        BufferedReader reader;
+        try {
+
+            reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open("pokemon_types.csv")));
+            PokemonInfo.typeNames = reader.readLine().split(",");
+            reader.close();
+
+        }
+        catch(Exception e) {
+            Log.d("testCsv", e.getLocalizedMessage());
+        }
+
     }
 }
