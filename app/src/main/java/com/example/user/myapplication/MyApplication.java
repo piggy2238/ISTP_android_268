@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.example.user.myapplication.model.PokemonType;
 import com.example.user.myapplication.model.SearchPokemonInfo;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.parse.Parse;
@@ -29,12 +30,21 @@ public class MyApplication extends Application {
                 .build());
 
         //初始化 ImageLoader
+
+        //1. Set defaultOptions
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
+
+        //2.初始化
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
-//                .defaultDisplayImageOptions(defaultOptions)
+                .defaultDisplayImageOptions(defaultOptions)
                 .diskCacheSize(50*1024*1024)
                 .diskCacheFileCount(100)
                 .build();
 
+        //3.實體化
         ImageLoader.getInstance().init(config);
     }
 }

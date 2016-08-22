@@ -87,9 +87,10 @@ public class DrawerActivity extends AppCompatActivity implements FragmentManager
         * 第三層放TestFragment,內容為Fake 3*/
 
         fragment = new Fragment[3];
-        fragment[0] = PokemonListFragment.newInstance();
+//        fragment[0] = PokemonListFragment.newInstance();
         fragment[1] = PokemonSearchFragment.newInstance();
 //        fragment[1] = TestFragment.newInstance("fake 1");
+        fragment[0] = TestFragment.newInstance("fake 1");
         fragment[2] = TestFragment.newInstance("Fake 3");
 
         /*遵循task(先進後出的資料結構),將資料倒序放入FragmentManager中*/

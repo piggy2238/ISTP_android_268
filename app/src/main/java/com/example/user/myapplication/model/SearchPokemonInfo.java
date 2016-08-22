@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * Created by User on 2016/8/18.
  */
-@ParseClassName("PokemonInfo")
+@ParseClassName("Pokemon")
 public class SearchPokemonInfo extends ParseObject{
 
     //一個資訊一個key
