@@ -26,7 +26,10 @@ public class PokemonSearchListViewAdapter extends ArrayAdapter<SearchPokemonInfo
     PokemonSearchFragment searchFragment;
 
 
-    public PokemonSearchListViewAdapter(Context context, int resource, List<SearchPokemonInfo> objects, PokemonSearchFragment fragment) {
+    public PokemonSearchListViewAdapter(Context context,
+                                        int resource,
+                                        List<SearchPokemonInfo> objects,
+                                        PokemonSearchFragment fragment) {
         super(context, resource, objects);
 
         this.inflater = LayoutInflater.from(context);

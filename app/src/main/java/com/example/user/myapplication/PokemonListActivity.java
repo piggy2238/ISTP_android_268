@@ -3,19 +3,15 @@ package com.example.user.myapplication;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
-import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 //import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -119,12 +115,12 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
             //2.更新hp資料 = max hp
             for (PokemonInfo pokemonInfo : adapter.selectedPokemon) {
                 if(pokemonInfo !=null){
-                    if(pokemonInfo.currentHP != pokemonInfo.maxHP) {
-                        pokemonInfo.currentHP = Integer.valueOf(pokemonInfo.maxHP);
+                    if(pokemonInfo.getCurrentHP() != pokemonInfo.getMaxHP()) {
+                        pokemonInfo.setCurrentHP(Integer.valueOf(pokemonInfo.getMaxHP()));
                         adapter.update(pokemonInfo);
-                        Toast.makeText(this, pokemonInfo.name + "已補血", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, pokemonInfo.getName() + "已補血", Toast.LENGTH_SHORT).show();
                     }else{
-                        Toast.makeText(this, pokemonInfo.name + "滿血中", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, pokemonInfo.getName() + "滿血中", Toast.LENGTH_SHORT).show();
                     }
                     pokemonInfo.isSelected = false;
                 }
@@ -185,7 +181,7 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
             //3.執行刪除動作並通知使用者
             if (pokemonInfo != null) {
                 adapter.remove(pokemonInfo);
-                Toast.makeText(this, pokemonInfo.name + "已存入電腦中", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, pokemonInfo.getName() + "已存入電腦中", Toast.LENGTH_LONG).show();
             }
 
         } else if (resultCode == listLevelup) {
@@ -199,12 +195,12 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
             //3.執行LevelUp並通知使用者
             if (pokemonInfo != null) {
                 //被選到的pokemon level +1
-                int level = Integer.valueOf(pokemonInfo.level);
+                int level = Integer.valueOf(pokemonInfo.getLevel());
                 level += 1;
-                pokemonInfo.level = level;
+                pokemonInfo.setLevel(level);
                 //更新pokemon資訊
                 adapter.update(pokemonInfo);
-                Toast.makeText(this, pokemonInfo.name + "已升級", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, pokemonInfo.getName() + "已升級", Toast.LENGTH_LONG).show();
             }
 
         }

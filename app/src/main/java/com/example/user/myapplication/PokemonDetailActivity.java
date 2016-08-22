@@ -5,8 +5,6 @@ import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -87,23 +85,23 @@ public class PokemonDetailActivity extends CustomizedActivity {
         }
 
         //bind with data
-        mPicasso.load(mpokemonInfo.detailImgId).into(img);
-        nameText.setText(mpokemonInfo.name);
-        levelText.setText(String.valueOf(mpokemonInfo.level));
-        currentHp.setText(String.valueOf(mpokemonInfo.currentHP));
-        maxHp.setText(String.valueOf(mpokemonInfo.maxHP));
-        type_1.setText(String.valueOf(mpokemonInfo.type_1));
-        type_2.setText(String.valueOf(mpokemonInfo.type_2));
+        mPicasso.load(mpokemonInfo.getDetailImgId()).into(img);
+        nameText.setText(mpokemonInfo.getName());
+        levelText.setText(String.valueOf(mpokemonInfo.getLevel()));
+        currentHp.setText(String.valueOf(mpokemonInfo.getCurrentHP()));
+        maxHp.setText(String.valueOf(mpokemonInfo.getMaxHP()));
+        type_1.setText(String.valueOf(mpokemonInfo.getType_1()));
+        type_2.setText(String.valueOf(mpokemonInfo.getType_2()));
 
-        if(mpokemonInfo.type_1 != -1) {
-            type_1.setText(PokemonInfo.typeNames[mpokemonInfo.type_1]);
+        if(mpokemonInfo.getType_1() != -1) {
+            type_1.setText(PokemonInfo.typeNames[mpokemonInfo.getType_1()]);
         }
         else {
             type_1.setText("");
         }
 
-        if(mpokemonInfo.type_2 != -1) {
-            type_2.setText(PokemonInfo.typeNames[mpokemonInfo.type_2]);
+        if(mpokemonInfo.getType_2() != -1) {
+            type_2.setText(PokemonInfo.typeNames[mpokemonInfo.getType_2()]);
         }
         else {
             type_2.setText("");
@@ -113,14 +111,14 @@ public class PokemonDetailActivity extends CustomizedActivity {
 
 
         for (int i = 0 ; i<PokemonInfo.numCurrentSkills; i++){
-            if (mpokemonInfo.skill[i]!=null){
-                skillText[i].setText(mpokemonInfo.skill[i]);
+            if (mpokemonInfo.getSkill()[i]!=null){
+                skillText[i].setText(mpokemonInfo.getSkill()[i]);
             }else{
                 skillText[i].setText("");
             }
         }
 
-        int progress = (int)((((float)(mpokemonInfo.currentHP))/mpokemonInfo.maxHP)*100);
+        int progress = (int)((((float)(mpokemonInfo.getCurrentHP()))/ mpokemonInfo.getMaxHP())*100);
         hbBar.setProgress(progress);
     }
 
@@ -152,7 +150,7 @@ public class PokemonDetailActivity extends CustomizedActivity {
             Intent intent = new Intent();
 
             //1.紀錄被選到的pokemon key與name
-            intent.putExtra(PokemonInfo.nameKey,mpokemonInfo.name);
+            intent.putExtra(PokemonInfo.nameKey, mpokemonInfo.getName());
             setResult(PokemonListActivity.listRemove,intent);
 
             //2.刪除此pokemon資料 (Work on ListActivity)
@@ -166,7 +164,7 @@ public class PokemonDetailActivity extends CustomizedActivity {
             //測試按鈕是否可work
             //Log.d("menuItem","action_level_up");
             //1.取回pokemon level 資料
-            int level=Integer.valueOf(mpokemonInfo.level);
+            int level=Integer.valueOf(mpokemonInfo.getLevel());
 
             //2.pokemon level up
              level+=1;
@@ -180,7 +178,7 @@ public class PokemonDetailActivity extends CustomizedActivity {
             Intent intent = new Intent();
 
             //5.紀錄被選到的pokemon key與name
-            intent.putExtra(PokemonInfo.nameKey,mpokemonInfo.name);
+            intent.putExtra(PokemonInfo.nameKey, mpokemonInfo.getName());
             setResult(PokemonListActivity.listLevelup,intent);
 
             //6.升級此pokemon資料 (Work on ListActivity)
