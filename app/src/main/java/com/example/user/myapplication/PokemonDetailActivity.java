@@ -23,7 +23,6 @@ public class PokemonDetailActivity extends CustomizedActivity {
     PokemonInfo mpokemonInfo;
     Resources mRes;
     String packageName;
-    String level;
 
     //UI 成員變數
     ImageView img;
@@ -37,10 +36,10 @@ public class PokemonDetailActivity extends CustomizedActivity {
     ProgressBar hbBar;
     Picasso mPicasso;
 
-    //音效
-    SoundPool soundPool;
-    int level_up_sound;
-    int pokemon_save;
+//    //音效
+//    SoundPool soundPool;
+//    int level_up_sound;
+//    int pokemon_save;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -61,10 +60,10 @@ public class PokemonDetailActivity extends CustomizedActivity {
         //一般create
             setView();
 
-        //導入音效
-        soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC,5);
-        level_up_sound = soundPool.load(this,R.raw.level_up_sound,1);
-        pokemon_save = soundPool.load(this,R.raw.pokemon_save,1);
+//        //導入音效
+//        soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC,5);
+//        level_up_sound = soundPool.load(this,R.raw.level_up_sound,1);
+//        pokemon_save = soundPool.load(this,R.raw.pokemon_save,1);
     }
 
 
@@ -142,7 +141,7 @@ public class PokemonDetailActivity extends CustomizedActivity {
         //判斷是否被選到
         //判斷是否與menu內存在id相同 (相同表示存在<return true>,不相同表示不存在<return false>)
         if (itemID == R.id.action_save){
-            soundPool.play(pokemon_save,1,1,0,0,0);
+//            soundPool.play(pokemon_save,1,1,0,0,0);
             //test是否按鈕可work
             //Log.d("menuItem","action_save");
 
@@ -170,7 +169,7 @@ public class PokemonDetailActivity extends CustomizedActivity {
              level+=1;
 
             //3.存回原始紀錄
-            soundPool.play(level_up_sound,1,1,0,0,0);
+//            soundPool.play(level_up_sound,1,1,0,0,0);
             levelText.setText(String.valueOf(level));
             Toast.makeText(this,"恭喜升級",Toast.LENGTH_SHORT).show();
 

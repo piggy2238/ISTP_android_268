@@ -173,11 +173,13 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         PokemonInfo pokemonInfo = adapter.getItem(position);
+        Toast.makeText(activity, pokemonInfo.getName(), Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(activity, PokemonDetailActivity.class);
         intent.putExtra(PokemonInfo.parcelKey, pokemonInfo);
         startActivityForResult(intent, detailActivityRequestCode);
     }
 
+    //接收從 detail 回傳的參數 並改變 ListView
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -229,20 +231,20 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
             //soundPool.play(healing_sound,1,1,0,0,0);
             //1.抓取被選取的神奇寶貝
             //2.更新hp資料 = max hp
-            for (PokemonInfo pokemonInfo : adapter.selectedPokemon) {
-                if(pokemonInfo !=null){
-                    if(pokemonInfo.getCurrentHP() != pokemonInfo.getMaxHP()) {
-                        pokemonInfo.setCurrentHP(Integer.valueOf(pokemonInfo.getMaxHP()));
-                        adapter.update(pokemonInfo);
-                        Toast.makeText(activity, pokemonInfo.getName() + "已補血", Toast.LENGTH_SHORT).show();
-                    }else{
-                        Toast.makeText(activity, pokemonInfo.getName() + "滿血中", Toast.LENGTH_SHORT).show();
-                    }
-                    pokemonInfo.isSelected = false;
-                }
-            }
-            //清除選取的pokemon
-            adapter.selectedPokemon.clear();
+//            for (PokemonInfo pokemonInfo : adapter.selectedPokemon) {
+//                if(pokemonInfo !=null){
+//                    if(pokemonInfo.getCurrentHP() != pokemonInfo.getMaxHP()) {
+//                        pokemonInfo.setCurrentHP(Integer.valueOf(pokemonInfo.getMaxHP()));
+//                        adapter.update(pokemonInfo);
+//                        Toast.makeText(activity, pokemonInfo.getName() + "已補血", Toast.LENGTH_SHORT).show();
+//                    }else{
+//                        Toast.makeText(activity, pokemonInfo.getName() + "滿血中", Toast.LENGTH_SHORT).show();
+//                    }
+//                    pokemonInfo.isSelected = false;
+//                }
+//            }
+//            //清除選取的pokemon
+//            adapter.selectedPokemon.clear();
 
             return true;
         } else if (itemId == R.id.action_setting) {
