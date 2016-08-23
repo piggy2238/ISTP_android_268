@@ -37,19 +37,23 @@ public class PokemonInfo  extends ParseObject implements Parcelable {
     //3.紀錄 localDB 的名字
     public static final String localDBTableName = PokemonInfo.class.getName();
 
+    //4.為了讀取 skill 新增的兩個 boolean
+    boolean skillHaveBeenInited = false;
+    boolean skillHaveBeenModified = false;
+
     public final static int numCurrentSkills = 4;
     public static String[] typeNames ;
 
     //因為要傳遞值 使用plugin 進行批次傳遞 存於parcle 作為初始化數值 再傳遞到下個Activity
     //但因為detail 還沒做, 所以這邊先不進行
-    private int detailImgId;
-    private int imgId;
-    private String name;
-    private int level;
-    private int currentHP;
-    private int maxHP;
-    private int type_1;
-    private int type_2;
+//    private int detailImgId;
+//    private int imgId;
+//    private String name;
+//    private int level;
+//    private int currentHP;
+//    private int maxHP;
+//    private int type_1;
+//    private int type_2;
     private String[] skill = new String[numCurrentSkills];
 
     public boolean isSelected = false;
@@ -165,8 +169,33 @@ public class PokemonInfo  extends ParseObject implements Parcelable {
         put(type2Key,type_2);
     }
 
+    //Skill function 調整
     public String[] getSkill() {
-        return skill;
+        if(!skillHaveBeenInited){
+            skillHaveBeenInited = true;
+            this.skill = readSkillFromParseStorage();
+        }
+        else if(skillHaveBeenModified){
+            skillHaveBeenModified = false;
+            this.skill = readSkillFromParseStorage();
+
+        }
+        return this.skill;
+    }
+
+    private String[] readSkillFromParseStorage(){
+
+        ArrayList<String> skillList = (ArrayList)get(skillKey);
+        String[] skillArray = new String[numCurrentSkills];
+
+        if(skillList != null){
+
+            for(int i = 0; i <= skillList.size() ; i++) {
+                skillArray[i] = skillList.get(i);
+            }
+        }
+
+        return skillArray;
     }
 
     public void setSkill(String[] skill) {

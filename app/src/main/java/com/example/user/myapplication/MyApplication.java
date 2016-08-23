@@ -2,6 +2,7 @@ package com.example.user.myapplication;
 
 import android.app.Application;
 
+import com.example.user.myapplication.model.PokemonInfo;
 import com.example.user.myapplication.model.PokemonType;
 import com.example.user.myapplication.model.SearchPokemonInfo;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -19,6 +20,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         //與parse 註冊 subclass
+        ParseObject.registerSubclass(PokemonInfo.class);
         ParseObject.registerSubclass(PokemonType.class);
         ParseObject.registerSubclass(SearchPokemonInfo.class);
 
