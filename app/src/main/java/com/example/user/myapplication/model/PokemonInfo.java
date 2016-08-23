@@ -194,9 +194,9 @@ public class PokemonInfo  extends ParseObject implements Parcelable {
             public void done(List<PokemonInfo> objects, ParseException e) {
                 if(e == null){
 
-                    for (PokemonInfo object:objects){
-                        object.deleteEventually();
-                    }
+//                    for (PokemonInfo object:objects){
+//                        object.deleteEventually();
+//                    }
 
                     PokemonInfo.unpinAllInBackground(objects);
 
@@ -211,8 +211,8 @@ public class PokemonInfo  extends ParseObject implements Parcelable {
 
         PokemonInfo.pinAllInBackground(localDBTableName,pokemonInfos);
 
-        for(PokemonInfo pokemonInfo: pokemonInfos){
-            pokemonInfo.saveEventually();
-        }
+//        for(PokemonInfo pokemonInfo: pokemonInfos){
+//            pokemonInfo.saveEventually();
+//        }
     }
 }
