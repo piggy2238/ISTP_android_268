@@ -78,7 +78,6 @@ public class PokemonInfo  extends ParseObject implements Parcelable {
         dest.writeInt(this.getType_2());
         dest.writeStringArray(this.getSkill());
     }
-
     public PokemonInfo() {
     }
 
@@ -190,7 +189,7 @@ public class PokemonInfo  extends ParseObject implements Parcelable {
 
         if(skillList != null){
 
-            for(int i = 0; i <= skillList.size() ; i++) {
+            for(int i = 0; i < skillList.size() ; i++) {
                 skillArray[i] = skillList.get(i);
             }
         }
