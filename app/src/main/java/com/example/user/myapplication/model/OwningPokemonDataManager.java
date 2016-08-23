@@ -65,10 +65,13 @@ public class OwningPokemonDataManager {
         pokemonInfo.setType_1(Integer.valueOf(dataFields[6]));
         pokemonInfo.setType_2(Integer.valueOf(dataFields[7]));
         //if strings are not enough, rest of array index would point to null.
-        for(int i = skill_startIndex;i < dataFields.length;i++) {
-            pokemonInfo.getSkill()[i - skill_startIndex] = dataFields[i];
-        }
+        //改寫skill
+        String[] skillBuffer = new String[PokemonInfo.numCurrentSkills];
 
+        for(int i = skill_startIndex;i < dataFields.length; i++) {
+            skillBuffer[i - skill_startIndex] = dataFields[i];
+        }
+        pokemonInfo.setSkill(skillBuffer);
         return pokemonInfo;
 
 

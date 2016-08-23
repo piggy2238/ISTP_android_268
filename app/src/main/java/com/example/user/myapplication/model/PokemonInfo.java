@@ -174,7 +174,9 @@ public class PokemonInfo  extends ParseObject implements Parcelable {
         List<String> skilllist = new ArrayList<>(skill.length);
 
         for(String skillName : skill){
-            skilllist.add(skillName);
+            if(skillName != null){
+                skilllist.add(skillName);
+            }
         }
 
         put(skillKey,skilllist);
