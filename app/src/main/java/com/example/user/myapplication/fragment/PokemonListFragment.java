@@ -80,6 +80,7 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
         boolean recordInDB = preferences.getBoolean(recordInDBKey, false);
 
         OwningPokemonDataManager dataManager = new OwningPokemonDataManager(activity);
+        dataManager.loadPokemonTypes();
 
         //初次使用建立新的資料庫
         if(!recordInDB){
@@ -103,8 +104,8 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
 
             ParseQuery<PokemonInfo> query = PokemonInfo.getQuery();
             query.fromPin(PokemonInfo.localDBTableName).findInBackground(this);//從 local 取資料
-            query = PokemonInfo.getQuery();
-            query.findInBackground(this);//Load from DB; this 透過 callback 去取資料
+//            query = PokemonInfo.getQuery();
+//            query.findInBackground(this);//Load from DB; this 透過 callback 去取資料
 
         }
     }
