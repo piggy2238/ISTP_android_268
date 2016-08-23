@@ -187,8 +187,9 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
             PokemonInfo pokemonInfo = adapter.getItemWithName(nameToRemove);
 
              if (pokemonInfo != null) {
-                adapter.remove(pokemonInfo);
-                Toast.makeText(activity, pokemonInfo.getName() + "已存入電腦中", Toast.LENGTH_LONG).show();
+                 adapter.remove(pokemonInfo);
+                 adapter.selectedPokemon.clear();
+                 Toast.makeText(activity, pokemonInfo.getName() + "已存入電腦中", Toast.LENGTH_LONG).show();
             }
 
         } else if (resultCode == listLevelup) {

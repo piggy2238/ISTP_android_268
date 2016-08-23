@@ -16,8 +16,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 /**
  * Created by user on 2016/7/25.
  */
@@ -182,9 +180,5 @@ public class PokemonListViewAdapter extends ArrayAdapter<PokemonInfo> {
     }
 
 ////////////////////////////////////////////////////////////////////
-    public void remove(PokemonInfo object){
-        selectedPokemon.remove(object);
-        super.remove(object);
-    }
 
 }

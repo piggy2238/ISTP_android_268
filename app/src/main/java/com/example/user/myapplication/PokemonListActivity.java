@@ -181,6 +181,7 @@ public class PokemonListActivity extends CustomizedActivity implements AdapterVi
             //3.執行刪除動作並通知使用者
             if (pokemonInfo != null) {
                 adapter.remove(pokemonInfo);
+                adapter.selectedPokemon.remove(pokemonInfo);
                 Toast.makeText(this, pokemonInfo.getName() + "已存入電腦中", Toast.LENGTH_LONG).show();
             }
 
