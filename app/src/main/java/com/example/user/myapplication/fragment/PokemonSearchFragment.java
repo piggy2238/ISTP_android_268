@@ -296,6 +296,8 @@ public class PokemonSearchFragment extends Fragment implements DialogInterface.O
             if (dialogViewHolder.containedByLeftInterval()){
                 query = query.whereLessThan(SearchPokemonInfo.hpKey, dialogViewHolder.getRightIntervalVal());
             }
+            //照HP大小排序
+            query = query.addAscendingOrder(SearchPokemonInfo.hpKey);
         }
 
         //搜尋 特定屬性
@@ -305,7 +307,7 @@ public class PokemonSearchFragment extends Fragment implements DialogInterface.O
 
             for(int i = 0; i < 2; i++ ){
                 int selectType = dialogViewHolder.getSelectorType(i);
-                if (selectType == -1 ){
+                if (selectType != -1 ){
                     typeCondition.add(selectType);
                 }
             }
@@ -313,7 +315,6 @@ public class PokemonSearchFragment extends Fragment implements DialogInterface.O
             findCallback.numTypesInCondition = typeCondition.size(); //用 callback 去判斷到底設定幾個屬性搜尋
             query = query.whereContainsAll(SearchPokemonInfo.typeKey,typeCondition);
         }
-
         //
         query.findInBackground(findCallback);
     }

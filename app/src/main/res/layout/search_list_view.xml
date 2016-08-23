@@ -20,7 +20,7 @@
         android:layout_marginBottom="30dp" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="name"
@@ -31,7 +31,7 @@
         android:layout_marginLeft="10dp" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Type1"
@@ -42,18 +42,18 @@
         android:layout_marginLeft="10dp" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="hpVal"
         android:id="@+id/hpText"
         android:layout_alignTop="@+id/nameText"
-        android:layout_toRightOf="@+id/type1Text"
+        android:layout_toRightOf="@+id/nameText"
         android:layout_marginLeft="40dp"
         android:layout_marginStart="40dp" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Type2"
