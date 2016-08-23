@@ -173,7 +173,8 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         PokemonInfo pokemonInfo = adapter.getItem(position);
-        Toast.makeText(activity, pokemonInfo.getName(), Toast.LENGTH_SHORT).show();
+        //測試 pokemonInfo 是否拿到資料
+//        Toast.makeText(activity, pokemonInfo.getName(), Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(activity, PokemonDetailActivity.class);
         intent.putExtra(PokemonInfo.parcelKey, pokemonInfo);
         startActivityForResult(intent, detailActivityRequestCode);
@@ -189,7 +190,7 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
             PokemonInfo pokemonInfo = adapter.getItemWithName(nameToRemove);
 
              if (pokemonInfo != null) {
-                 adapter.remove(pokemonInfo);
+                 removePokemonInfo(pokemonInfo);
                  adapter.selectedPokemon.clear();
                  Toast.makeText(activity, pokemonInfo.getName() + "已存入電腦中", Toast.LENGTH_LONG).show();
             }
@@ -201,9 +202,7 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
 
             if (pokemonInfo != null) {
                 int level = Integer.valueOf(pokemonInfo.getLevel());
-                level += 1;
-                pokemonInfo.setLevel(level);
-                adapter.update(pokemonInfo);
+                setListLevelUp(pokemonInfo, level);
                 Toast.makeText(activity, pokemonInfo.getName() + "已升級", Toast.LENGTH_LONG).show();
             }
 
@@ -231,20 +230,19 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
             //soundPool.play(healing_sound,1,1,0,0,0);
             //1.抓取被選取的神奇寶貝
             //2.更新hp資料 = max hp
-//            for (PokemonInfo pokemonInfo : adapter.selectedPokemon) {
-//                if(pokemonInfo !=null){
-//                    if(pokemonInfo.getCurrentHP() != pokemonInfo.getMaxHP()) {
-//                        pokemonInfo.setCurrentHP(Integer.valueOf(pokemonInfo.getMaxHP()));
-//                        adapter.update(pokemonInfo);
-//                        Toast.makeText(activity, pokemonInfo.getName() + "已補血", Toast.LENGTH_SHORT).show();
-//                    }else{
-//                        Toast.makeText(activity, pokemonInfo.getName() + "滿血中", Toast.LENGTH_SHORT).show();
-//                    }
-//                    pokemonInfo.isSelected = false;
-//                }
-//            }
-//            //清除選取的pokemon
-//            adapter.selectedPokemon.clear();
+            for (PokemonInfo pokemonInfo : adapter.selectedPokemon) {
+                if(pokemonInfo !=null){
+                    if(pokemonInfo.getCurrentHP() != pokemonInfo.getMaxHP()) {
+                        healingPokemonInfo(pokemonInfo);
+                        Toast.makeText(activity, pokemonInfo.getName() + "已補血", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(activity, pokemonInfo.getName() + "滿血中", Toast.LENGTH_SHORT).show();
+                    }
+                    pokemonInfo.isSelected = false;
+                }
+            }
+            //清除選取的pokemon
+            adapter.selectedPokemon.clear();
 
             return true;
         } else if (itemId == R.id.action_setting) {
@@ -261,6 +259,24 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
 
         pokemonInfo.unpinInBackground(PokemonInfo.localDBTableName);
         pokemonInfo.deleteEventually();
+
+    }
+
+    //補血功能開發 並且能同步到remote
+    public void healingPokemonInfo(PokemonInfo pokemonInfo){
+        pokemonInfo.setCurrentHP(Integer.valueOf(pokemonInfo.getMaxHP()));
+        adapter.update(pokemonInfo);
+
+        PokemonInfo.pinAllInBackground(PokemonInfo.localDBTableName,pokemonInfos);
+    }
+
+    //升級功能開發 與 remote 同步
+    public void setListLevelUp(PokemonInfo pokemonInfo, int level){
+        level += 1;
+        pokemonInfo.setLevel(level);
+        adapter.update(pokemonInfo);
+
+        PokemonInfo.pinAllInBackground(PokemonInfo.localDBTableName,pokemonInfos);
 
     }
 
