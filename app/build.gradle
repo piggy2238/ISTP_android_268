@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.user.myapplication"
-        minSdkVersion 15
+        minSdkVersion 17
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -16,6 +16,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    productFlavors{
+
     }
 }
 
@@ -37,4 +40,7 @@ dependencies {
     compile 'com.parse:parse-android:1.13.1'
     //ImageLoader
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    //Google Map
+    compile 'com.google.android.gms:play-services-maps:9.4.0'
+    compile 'com.google.android.gms:play-services-location:9.4.0'
 }
