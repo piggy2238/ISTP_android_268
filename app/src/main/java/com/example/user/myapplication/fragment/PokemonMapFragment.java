@@ -7,18 +7,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.user.myapplication.GeoCodingTask;
 import com.example.user.myapplication.R;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Created by User on 2016/8/24.
  */
-public class PokemonMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class PokemonMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GeoCodingTask.GeoCodingResponse {
 
     //宣告變數
     View fragmentView;
@@ -82,10 +87,31 @@ public class PokemonMapFragment extends Fragment implements OnMapReadyCallback, 
         mapSettings.setZoomControlsEnabled(true); // controlled by UI widgets. 滑鼠或觸控筆 等
         mapSettings.setZoomGesturesEnabled(true); // 用手勢控制
 
+        //預設的視窗中心
+        (new GeoCodingTask(PokemonMapFragment.this)).execute("台北市羅斯福路四段一號");
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
         return false;
+    }
+
+    /*拿到經緯度以後 要執行下面這件事
+    * 拿到經緯度以後, 就是要move到地圖中間
+    * 這邊先以固定的地圖中心為例: 國立台灣大學
+    * 設定好後別忘了到 onMapReady 加上去 不然就失去預設值的意義*/
+    @Override
+    public void callbackWithGeoCodingResult(LatLng latLng) {
+
+        //移動台大到視窗的視野中間_參數:經緯度,zoom-in比例
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+        map.moveCamera(cameraUpdate);
+
+        //插旗子
+        MarkerOptions markerOptions = new MarkerOptions()
+                .position(latLng)
+                .title("NTU")
+                .snippet("National Taiwan University");
+        map.addMarker(markerOptions);
     }
 }
