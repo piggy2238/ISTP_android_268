@@ -1,8 +1,13 @@
 package com.example.user.myapplication.fragment;
 
+import android.Manifest;
 import android.app.Fragment;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.pm.ActivityInfoCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +15,7 @@ import android.view.ViewGroup;
 import com.example.user.myapplication.GeoCodingTask;
 import com.example.user.myapplication.R;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,7 +29,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 /**
  * Created by User on 2016/8/24.
  */
-public class PokemonMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GeoCodingTask.GeoCodingResponse {
+public class PokemonMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GeoCodingTask.GeoCodingResponse, GoogleApiClient.ConnectionCallbacks {
 
     //宣告變數
     View fragmentView;
@@ -113,5 +119,80 @@ public class PokemonMapFragment extends Fragment implements OnMapReadyCallback, 
                 .title("NTU")
                 .snippet("National Taiwan University");
         map.addMarker(markerOptions);
+
+        //顯示地圖後, 能夠順便要到 使用者的位置資訊
+        createGoogleApiClient();
     }
+
+    /*透過google API 去存取 google 各種服務 EX.位置資訊
+    * 1. 先 build 一個 googleapiClient 物件 取得所在位置
+    * 2. 連接 API 跟他要求我們想要做的事情
+    * 3. 詢問使用者是否允許使用位置資訊的權限
+    * 4. 判定使用者是否同意，若同意則進行存取當前位置
+    * 5. 設定並存取使用者當前位置
+    * genymotion 必須要開 GPS 設定位置 才能測試這部分的功能
+    * */
+
+    private void createGoogleApiClient(){
+
+        if (googleApiClient == null){
+            googleApiClient = new GoogleApiClient.Builder(getActivity())
+                    .addConnectionCallbacks(this)
+                    .addApi(LocationServices.API)
+                    .build();
+            googleApiClient.connect();
+        }
+    }
+
+    //連上以後判定是否給予過權限
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED){
+            //未給過 要重新詢問是否給予權限 android 6.0.0 每次定位前都要問
+            requestLocationPermissions(ACCESS_FINE_LOCATION_REQUEST_CODE);
+        }else{
+            //給過 就直接 設定當前位置
+            SetMyLocationButtonEnabled();
+        }
+    }
+
+    //3. 詢問使用者是否允許使用位置資訊的權限
+    private void requestLocationPermissions(int requestCode) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            requestPermissions(
+                    new String[]
+                            {
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                            },
+                    requestCode);
+        }
+    }
+
+    //4. 判定使用者是否同意，若同意則進行存取當前位置
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == ACCESS_FINE_LOCATION_REQUEST_CODE){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                SetMyLocationButtonEnabled();
+            }
+        }
+    }
+
+    //5. 設定並存取使用者當前位置
+    private void SetMyLocationButtonEnabled() {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            //若不同意就要再問一次 鬼打牆@@?
+            requestLocationPermissions(ACCESS_FINE_LOCATION_REQUEST_CODE);
+        } else {
+            //存取當前位置
+            map.getUiSettings().setMyLocationButtonEnabled(true);
+            map.setMyLocationEnabled(true);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {}
 }
