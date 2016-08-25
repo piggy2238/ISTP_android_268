@@ -179,7 +179,7 @@ public class MainActivity extends CustomizedActivity implements View.OnClickList
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Intent intent = new Intent(MainActivity.this,PokemonListActivity.class);
+                    Intent intent = new Intent(MainActivity.this,DrawerActivity.class);
                     intent.putExtra(optionSelectedKey,selectedOptionIndex);
                     startActivity(intent);
                     MainActivity.this.finish();

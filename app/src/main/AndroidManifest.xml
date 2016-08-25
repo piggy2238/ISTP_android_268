@@ -20,6 +20,10 @@
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyD7MA4LidRimbAOuFVEIKDNfV3flUAfDNw"/>
 
         <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <!--New Activity 新增進來-->
         <activity android:name=".PokemonListActivity">
@@ -33,10 +37,7 @@
 
         <activity android:name=".DrawerActivity"
             android:theme="@style/MaterialDrawerTheme.Light.DarkToolbar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
 
     </application>

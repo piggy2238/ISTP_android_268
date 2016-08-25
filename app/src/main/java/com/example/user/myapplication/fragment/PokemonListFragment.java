@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -26,6 +27,7 @@ import com.example.user.myapplication.R;
 import com.example.user.myapplication.adapter.PokemonListViewAdapter;
 import com.example.user.myapplication.model.OwningPokemonDataManager;
 import com.example.user.myapplication.model.PokemonInfo;
+import com.example.user.myapplication.model.Utils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -52,6 +54,7 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
     public final static String recordInDBKey = "recordInDBKey";
 
     View fragmentView = null;
+    MediaPlayer mediaPlayer = null;
 
     //建立一個fragment樣板
     public static PokemonListFragment newInstance(){
@@ -67,7 +70,7 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
         super.onCreate(savedInstanceState);
         activity = getActivity();
         prepareListViewData();
-
+        mediaPlayer = Utils.loadSongFromAssets(activity, "healing_sound2.mp3");
 
     }
 
@@ -228,6 +231,9 @@ public class PokemonListFragment extends Fragment implements AdapterView.OnItemC
         } else if (itemId == R.id.action_heal) {
             Log.d("menuItem", "action_heal");
             //soundPool.play(healing_sound,1,1,0,0,0);
+            mediaPlayer.setVolume(1.0f,1.0f);
+            mediaPlayer.start();
+
             //1.抓取被選取的神奇寶貝
             //2.更新hp資料 = max hp
             for (PokemonInfo pokemonInfo : adapter.selectedPokemon) {
